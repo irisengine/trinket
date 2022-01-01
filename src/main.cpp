@@ -103,6 +103,8 @@ void go(int, char **)
         nullptr, mesh_manager.cube({0.2f, 0.2f, 0.2f}), iris::Transform{{}, {}, {0.5f, 1.7f, 0.5f}});
     auto *box = scene.create_entity(
         nullptr, mesh_manager.cube({}), iris::Transform{{-10.0f, 0.0f, 0.0f}, {}, {0.5f, 1.7f, 0.5f}});
+    auto *enemy = scene.create_entity(
+        nullptr, mesh_manager.cube({1.0f, 0.0f, 0.0f}), iris::Transform{{10.0f, 0.0f, 0.0f}, {}, {2.0f}});
     auto *ground = scene.create_entity(
         nullptr, mesh_manager.cube({0.0f, 1.0f, 0.0f}), iris::Transform{{0.0f, -1002.0f, 0.0f}, {}, {1000.0f}});
     scene.set_ambient_light({0.2f, 0.2f, 0.2f, 1.0f});
@@ -120,6 +122,8 @@ void go(int, char **)
     ps->create_rigid_body(ground->position(), ps->create_box_collision_shape({1000.0f}), iris::RigidBodyType::STATIC);
     ps->create_rigid_body(
         box->position(), ps->create_box_collision_shape({0.5f, 1.7f, 0.5f}), iris::RigidBodyType::STATIC);
+    const auto *enemy_body =
+        ps->create_rigid_body(enemy->position(), ps->create_box_collision_shape({2.0f}), iris::RigidBodyType::NORMAL);
     auto *character_controller = ps->create_character_controller();
     character_controller->reposition(player->position(), {});
 
@@ -200,6 +204,10 @@ void go(int, char **)
             iris::Quaternion player_orientation{{0.0f, 1.0f, 0.0f}, -camera_azimuth};
             player_orientation.normalise();
             player->set_orientation(player_orientation);
+
+            // update enemy
+            enemy->set_position(enemy_body->position());
+            enemy->set_orientation(enemy_body->orientation());
 
             window->render();
 
