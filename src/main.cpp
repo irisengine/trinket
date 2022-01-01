@@ -5,12 +5,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <iostream>
 #include <map>
 
 #include "iris/core/camera.h"
 #include "iris/core/colour.h"
+#include "iris/core/looper.h"
 #include "iris/core/root.h"
 #include "iris/core/start.h"
 #include "iris/core/transform.h"
@@ -32,6 +34,8 @@
 static constexpr auto pi = static_cast<float>(M_PI);
 static constexpr auto pi_2 = static_cast<float>(M_PI_2);
 static constexpr auto pi_4 = static_cast<float>(M_PI_4);
+
+using namespace std::literals::chrono_literals;
 
 namespace
 {
@@ -122,76 +126,87 @@ void go(int, char **)
     iris::RenderPass render_pass{&scene, &camera, nullptr, sky_box};
     window->set_render_passes({render_pass});
 
-    auto running = true;
-
-    do
-    {
-        auto event = window->pump_event();
-        while (event)
+    iris::Looper looper{
+        0ms,
+        16ms,
+        [ps](auto, std::chrono::microseconds delta)
         {
-            if (event->is_key(iris::Key::ESCAPE) || event->is_quit())
+            ps->step(std::chrono::duration_cast<std::chrono::milliseconds>(delta));
+            return true;
+        },
+        [&](auto, auto)
+        {
+            auto running = true;
+
+            auto event = window->pump_event();
+            while (event)
             {
-                running = false;
-            }
-            else if (event->is_mouse())
-            {
-                static const auto sensitivity = 0.0025f;
-                const auto mouse = event->mouse();
-
-                //  adjust camera azimuth and ensure we are still pointing at the player
-                camera_azimuth += mouse.delta_x * sensitivity;
-                camera.adjust_yaw(mouse.delta_x * sensitivity);
-
-                //  adjust camera altitude and ensure we are still pointing at the player
-                // we clamp the altitude [0, pi/2] to ensure no weirdness happens
-                camera_altitude += -mouse.delta_y * sensitivity;
-                if (camera_altitude <= 0.0f)
+                if (event->is_key(iris::Key::ESCAPE) || event->is_quit())
                 {
-                    camera_altitude = 0.0f;
+                    running = false;
                 }
-                else if (camera_altitude >= pi_2)
+                else if (event->is_mouse())
                 {
-                    camera_altitude = pi_2;
+                    static const auto sensitivity = 0.0025f;
+                    const auto mouse = event->mouse();
+
+                    //  adjust camera azimuth and ensure we are still pointing at the player
+                    camera_azimuth += mouse.delta_x * sensitivity;
+                    camera.adjust_yaw(mouse.delta_x * sensitivity);
+
+                    //  adjust camera altitude and ensure we are still pointing at the player
+                    // we clamp the altitude [0, pi/2] to ensure no weirdness happens
+                    camera_altitude += -mouse.delta_y * sensitivity;
+                    if (camera_altitude <= 0.0f)
+                    {
+                        camera_altitude = 0.0f;
+                    }
+                    else if (camera_altitude >= pi_2)
+                    {
+                        camera_altitude = pi_2;
+                    }
+                    else
+                    {
+                        // only update pitch if altitude changed
+                        camera.adjust_pitch(mouse.delta_y * sensitivity);
+                    }
                 }
-                else
+                else if (event->is_key())
                 {
-                    // only update pitch if altitude changed
-                    camera.adjust_pitch(mouse.delta_y * sensitivity);
+                    const auto key = event->key();
+                    key_map[key.key] = key.state;
                 }
-            }
-            else if (event->is_key())
-            {
-                const auto key = event->key();
-                key_map[key.key] = key.state;
+
+                event = window->pump_event();
             }
 
-            event = window->pump_event();
-        }
+            character_controller->set_walk_direction(walk_direction(key_map, camera));
+            player->set_position(character_controller->position());
 
-        character_controller->set_walk_direction(walk_direction(key_map, camera));
-        player->set_position(character_controller->position());
+            static constexpr auto distance = 30.0f;
 
-        static constexpr auto distance = 30.0f;
+            // we store the camera position as polar coordinates, which means it moves around a unit sphere centered on
+            // the player convert back to cartesian coords
+            const iris::Vector3 offset{
+                distance * std::sin(pi_2 - camera_altitude) * std::cos(camera_azimuth),
+                distance * std::cos(pi_2 - camera_altitude),
+                distance * std::sin(pi_2 - camera_altitude) * std::sin(camera_azimuth)};
 
-        // we store the camera position as polar coordinates, which means it moves around a unit sphere centered on the
-        // player convert back to cartesian coords
-        const iris::Vector3 offset{
-            distance * std::sin(pi_2 - camera_altitude) * std::cos(camera_azimuth),
-            distance * std::cos(pi_2 - camera_altitude),
-            distance * std::sin(pi_2 - camera_altitude) * std::sin(camera_azimuth)};
+            // update camera position to always follow player
+            const iris::Vector3 new_camera_pos = player->position() + offset;
+            camera.set_position(new_camera_pos);
 
-        // update camera position to always follow player
-        const iris::Vector3 new_camera_pos = player->position() + offset;
-        camera.set_position(new_camera_pos);
+            // make player always face in direction of camera
+            iris::Quaternion player_orientation{{0.0f, 1.0f, 0.0f}, -camera_azimuth};
+            player_orientation.normalise();
+            player->set_orientation(player_orientation);
 
-        // make player always face in direction of camera
-        iris::Quaternion player_orientation{{0.0f, 1.0f, 0.0f}, -camera_azimuth};
-        player_orientation.normalise();
-        player->set_orientation(player_orientation);
+            window->render();
 
-        ps->step(std::chrono::milliseconds(16));
-        window->render();
-    } while (running);
+            return running;
+        }};
+
+    looper.run();
 }
 
 int main(int argc, char **argv)
