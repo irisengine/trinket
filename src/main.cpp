@@ -23,10 +23,49 @@
 #include "iris/graphics/window.h"
 #include "iris/graphics/window_manager.h"
 #include "iris/iris_version.h"
+#include "iris/physics/basic_character_controller.h"
+#include "iris/physics/physics_manager.h"
+#include "iris/physics/physics_system.h"
+#include "iris/physics/rigid_body.h"
+#include "iris/physics/rigid_body_type.h"
 
 static constexpr auto pi = static_cast<float>(M_PI);
 static constexpr auto pi_2 = static_cast<float>(M_PI_2);
 static constexpr auto pi_4 = static_cast<float>(M_PI_4);
+
+namespace
+{
+
+iris::Vector3 walk_direction(const std::map<iris::Key, iris::KeyState> &key_map, const iris::Camera &camera)
+{
+    iris::Vector3 walk_direction{};
+
+    if (key_map.at(iris::Key::W) == iris::KeyState::DOWN)
+    {
+        walk_direction += camera.direction();
+    }
+
+    if (key_map.at(iris::Key::S) == iris::KeyState::DOWN)
+    {
+        walk_direction -= camera.direction();
+    }
+
+    if (key_map.at(iris::Key::A) == iris::KeyState::DOWN)
+    {
+        walk_direction -= camera.right();
+    }
+
+    if (key_map.at(iris::Key::D) == iris::KeyState::DOWN)
+    {
+        walk_direction += camera.right();
+    }
+
+    walk_direction.y = 0.0f;
+    walk_direction.normalise();
+    return walk_direction;
+}
+
+}
 
 void go(int, char **)
 {
@@ -39,6 +78,9 @@ void go(int, char **)
 
     std::map<iris::Key, iris::KeyState> key_map = {
         {iris::Key::W, iris::KeyState::UP},
+        {iris::Key::A, iris::KeyState::UP},
+        {iris::Key::S, iris::KeyState::UP},
+        {iris::Key::D, iris::KeyState::UP},
     };
 
     // window and camera setup - we will use a 3rd person camera for this game
@@ -54,15 +96,28 @@ void go(int, char **)
     // basic scene setup
     iris::Scene scene{};
     auto *player = scene.create_entity(
-        nullptr, mesh_manager.cube({0.2f, 0.2f, 0.2f}), iris::Transform{{}, {}, {10.0f, 40.0f, 10.0f}});
-    scene.create_entity(
-        nullptr, mesh_manager.cube({}), iris::Transform{{-100.0f, 0.0f, 0.0f}, {}, {10.0f, 40.0f, 10.0f}});
-    scene.create_entity(
-        nullptr, mesh_manager.cube({0.0f, 1.0f, 0.0f}), iris::Transform{{0.0f, -1040.0f, 0.0f}, {}, {1000.0f}});
+        nullptr, mesh_manager.cube({0.2f, 0.2f, 0.2f}), iris::Transform{{}, {}, {0.5f, 1.7f, 0.5f}});
+    auto *box = scene.create_entity(
+        nullptr, mesh_manager.cube({}), iris::Transform{{-10.0f, 0.0f, 0.0f}, {}, {0.5f, 1.7f, 0.5f}});
+    auto *ground = scene.create_entity(
+        nullptr, mesh_manager.cube({0.0f, 1.0f, 0.0f}), iris::Transform{{0.0f, -1002.0f, 0.0f}, {}, {1000.0f}});
     scene.set_ambient_light({0.2f, 0.2f, 0.2f, 1.0f});
+    scene.create_light<iris::PointLight>(iris::Vector3{10.0f}, iris::Colour{100.0f, 100.0f, 100.0f});
 
     const auto sky_box = iris::Root::texture_manager().create(
         iris::Colour{0.275f, 0.51f, 0.796f}, iris::Colour{0.5f, 0.5f, 0.5f}, 2048u, 2048u);
+
+    auto *ps = iris::Root::physics_manager().create_physics_system();
+
+    auto debug_mesh = mesh_manager.unique_cube({});
+    auto *debug_draw = scene.create_entity(nullptr, debug_mesh.get(), iris::Vector3{}, iris::PrimitiveType::LINES);
+    ps->enable_debug_draw(debug_draw);
+
+    ps->create_rigid_body(ground->position(), ps->create_box_collision_shape({1000.0f}), iris::RigidBodyType::STATIC);
+    ps->create_rigid_body(
+        box->position(), ps->create_box_collision_shape({0.5f, 1.7f, 0.5f}), iris::RigidBodyType::STATIC);
+    auto *character_controller = ps->create_character_controller();
+    character_controller->reposition(player->position(), {});
 
     iris::RenderPass render_pass{&scene, &camera, nullptr, sky_box};
     window->set_render_passes({render_pass});
@@ -113,20 +168,10 @@ void go(int, char **)
             event = window->pump_event();
         }
 
-        if (key_map[iris::Key::W] == iris::KeyState::DOWN)
-        {
-            // calculate velocity in direction camera is looking (ignoring the y component as the player shouldn't be
-            // moving up and down)
-            const auto speed = 2.0f;
-            auto velocity = camera.direction();
-            velocity.y = 0.0f;
-            velocity.normalise();
-            velocity *= speed;
+        character_controller->set_walk_direction(walk_direction(key_map, camera));
+        player->set_position(character_controller->position());
 
-            player->set_position(player->position() + velocity);
-        }
-
-        static constexpr auto distance = 400.0f;
+        static constexpr auto distance = 30.0f;
 
         // we store the camera position as polar coordinates, which means it moves around a unit sphere centered on the
         // player convert back to cartesian coords
@@ -144,6 +189,7 @@ void go(int, char **)
         player_orientation.normalise();
         player->set_orientation(player_orientation);
 
+        ps->step(std::chrono::milliseconds(16));
         window->render();
     } while (running);
 }
