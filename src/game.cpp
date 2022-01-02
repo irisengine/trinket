@@ -34,6 +34,7 @@
 #include "iris/physics/rigid_body.h"
 #include "iris/physics/rigid_body_type.h"
 
+#include "enemy.h"
 #include "game_object.h"
 #include "input_handler.h"
 #include "message_type.h"
@@ -63,8 +64,6 @@ void Game::run()
     iris::Scene scene{};
     auto *box = scene.create_entity(
         nullptr, mesh_manager.cube({}), iris::Transform{{-10.0f, 0.0f, 0.0f}, {}, {0.5f, 1.7f, 0.5f}});
-    auto *enemy = scene.create_entity(
-        nullptr, mesh_manager.cube({1.0f, 0.0f, 0.0f}), iris::Transform{{10.0f, 0.0f, 0.0f}, {}, {2.0f}});
     auto *ground = scene.create_entity(
         nullptr, mesh_manager.cube({0.0f, 1.0f, 0.0f}), iris::Transform{{0.0f, -1002.0f, 0.0f}, {}, {1000.0f}});
     scene.set_ambient_light({0.2f, 0.2f, 0.2f, 1.0f});
@@ -81,6 +80,7 @@ void Game::run()
 
     std::vector<std::unique_ptr<GameObject>> objects{};
     objects.emplace_back(std::make_unique<InputHandler>(window));
+    objects.emplace_back(std::make_unique<Enemy>(iris::Vector3{10.0f, 0.0f, 0.0f}, scene, ps));
 
     objects.emplace_back(std::make_unique<Player>(scene, ps));
     auto *player = static_cast<Player *>(objects.back().get());
@@ -91,8 +91,6 @@ void Game::run()
     ps->create_rigid_body(ground->position(), ps->create_box_collision_shape({1000.0f}), iris::RigidBodyType::STATIC);
     ps->create_rigid_body(
         box->position(), ps->create_box_collision_shape({0.5f, 1.7f, 0.5f}), iris::RigidBodyType::STATIC);
-    const auto *enemy_body =
-        ps->create_rigid_body(enemy->position(), ps->create_box_collision_shape({2.0f}), iris::RigidBodyType::NORMAL);
 
     iris::RenderPass render_pass{&scene, camera->camera(), nullptr, sky_box};
     window->set_render_passes({render_pass});
@@ -107,10 +105,6 @@ void Game::run()
         },
         [&](auto, auto)
         {
-            // update enemy
-            enemy->set_position(enemy_body->position());
-            enemy->set_orientation(enemy_body->orientation());
-
             for (auto &object : objects)
             {
                 object->update();

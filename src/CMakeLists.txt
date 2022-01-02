@@ -1,6 +1,7 @@
 set(INCLUDE_ROOT "${PROJECT_SOURCE_DIR}/include/trinket")
 
 add_executable(trinket
+    ${INCLUDE_ROOT}/enemy.h
     ${INCLUDE_ROOT}/game.h
     ${INCLUDE_ROOT}/game_object.h
     ${INCLUDE_ROOT}/input_handler.h
@@ -10,6 +11,7 @@ add_executable(trinket
     ${INCLUDE_ROOT}/publisher.h
     ${INCLUDE_ROOT}/subscriber.h
     ${INCLUDE_ROOT}/third_person_camera.h
+    enemy.cpp
     game.cpp
     input_handler.cpp
     main.cpp
