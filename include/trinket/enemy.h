@@ -7,6 +7,7 @@
 #pragma once
 
 #include <any>
+#include <chrono>
 
 #include "iris/core/vector3.h"
 #include "iris/graphics/render_entity.h"
@@ -34,6 +35,7 @@ class Enemy : public GameObject, Subscriber
   private:
     iris::RenderEntity *render_entity_;
     iris::RigidBody *rigid_body_;
+    std::chrono::system_clock::time_point hit_cooldown_;
 };
 
 }

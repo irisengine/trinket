@@ -15,7 +15,7 @@ void go(int, char **)
 {
     // sanity check we're using the right version of iris for development
     static_assert(IRIS_VERSION_MAJOR == 2);
-    static_assert(IRIS_VERSION_MINOR == 0);
+    static_assert(IRIS_VERSION_MINOR == 1);
     static_assert(IRIS_VERSION_PATCH == 0);
 
     std::cout << "hello trinket" << std::endl;

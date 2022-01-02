@@ -16,6 +16,7 @@ enum class MessageType : std::uint16_t
     QUIT,
     MOUSE_MOVE,
     KEY_PRESS,
+    WEAPON_COLLISION,
 };
 
 }
