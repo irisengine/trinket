@@ -53,11 +53,14 @@ void Enemy::handle_message(MessageType message_type, const std::any &data)
         {
             const auto &[body, pos] = std::any_cast<std::tuple<iris::RigidBody *, iris::Vector3>>(data);
 
+            // if sword collided with us
             if (body == rigid_body_)
             {
+                // limit how often we can be attacked, this gives a short invulnerability window after each attack
                 const auto now = std::chrono::system_clock::now();
                 if (now >= hit_cooldown_)
                 {
+                    // apply a small impulse on hit to move us
                     auto impulse = (rigid_body_->position() - pos).normalise() * iris::Vector3{50.0f};
                     impulse.y = 0.0f;
                     rigid_body_->apply_impulse(impulse);

@@ -61,23 +61,28 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps)
 
 void Player::update()
 {
+    // handle attack logic if player is attacking
     if (attacking_)
     {
         const auto now = std::chrono::system_clock::now();
         if (now >= attack_stop_)
         {
+            // attack has completed so reset state
             attacking_ = false;
             sword_angle_ = pi_2;
         }
         else
         {
+            // get percentage of elapsed attack time
             const auto remaining = std::chrono::duration_cast<std::chrono::milliseconds>(attack_stop_ - now);
             const auto remaining_percentage =
                 static_cast<float>(remaining.count()) / static_cast<float>(attack_duration_.count());
 
+            // set sword angle based on how much tune has elapsed, this creates the sword swing
             sword_angle_ = -((pi * remaining_percentage) + pi_2);
         }
 
+        // get all contact points the sword is making (ignoring the player) and publish a message
         for (auto &contact : ps_->contacts(sword_body_))
         {
             if (contact.contact_b != character_controller_->rigid_body())
@@ -89,14 +94,17 @@ void Player::update()
 
     render_entity_->set_position(character_controller_->position());
 
+    // local transform of sword
     const auto sword_rot = iris::Matrix4(iris::Quaternion{{0.0f, 1.0f, 0.0f}, sword_angle_});
     const auto sword_translate = iris::Matrix4::make_translate({1.0f, 0.0f, 0.0f});
     const auto sword_scale = iris::Matrix4::make_scale({1.0f, 0.1f, 0.1f});
     const auto sword_transform = sword_rot * sword_translate * sword_scale;
 
+    // player transform (without scale)
     const auto player_transform =
         iris::Matrix4::make_translate(render_entity_->position()) * iris::Matrix4{render_entity_->orientation()};
 
+    // compound transform for sword
     sword_->set_transform(player_transform * sword_transform);
     sword_body_->reposition(sword_->position(), sword_->orientation());
 }
@@ -123,6 +131,8 @@ void Player::handle_message(MessageType message_type, const std::any &data)
         case MessageType::KEY_PRESS:
         {
             const auto key = std::any_cast<iris::KeyboardEvent>(data);
+
+            // player can only attack if not attacking
             if ((key.key == iris::Key::SPACE) && (key.state == iris::KeyState::DOWN) && !attacking_)
             {
                 attacking_ = true;
