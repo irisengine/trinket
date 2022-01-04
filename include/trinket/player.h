@@ -8,6 +8,8 @@
 
 #include <any>
 #include <chrono>
+#include <map>
+#include <string>
 
 #include "iris/core/quaternion.h"
 #include "iris/core/vector3.h"
@@ -44,11 +46,11 @@ class Player : public GameObject, Publisher, Subscriber
     iris::CharacterController *character_controller_;
     iris::RenderEntity *sword_;
     iris::RigidBody *sword_body_;
-    float sword_angle_;
     bool attacking_;
     std::chrono::system_clock::time_point attack_stop_;
     std::chrono::milliseconds attack_duration_;
     iris::PhysicsSystem *ps_;
+    std::string current_animation_;
 };
 
 }

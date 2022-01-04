@@ -70,7 +70,7 @@ void ThirdPersonCamera::update()
 
     player_->set_walk_direction(walk_direction);
 
-    static constexpr auto distance = 30.0f;
+    static constexpr auto distance = 20.0f;
 
     // we store the camera position as polar coordinates, which means it moves around a unit sphere centered on
     // the player convert back to cartesian coords
@@ -83,10 +83,14 @@ void ThirdPersonCamera::update()
     const iris::Vector3 new_camera_pos = player_->position() + offset;
     camera_.set_position(new_camera_pos);
 
-    // make player always face in direction of camera
-    iris::Quaternion player_orientation{{0.0f, 1.0f, 0.0f}, -azimuth_};
-    player_orientation.normalise();
-    player_->set_orientation(player_orientation);
+    // snap player to camera direction if moving
+    if ((key_map_[iris::Key::W] == iris::KeyState::DOWN) || (key_map_[iris::Key::A] == iris::KeyState::DOWN) ||
+        (key_map_[iris::Key::S] == iris::KeyState::DOWN) || (key_map_[iris::Key::D] == iris::KeyState::DOWN))
+    {
+        iris::Quaternion player_orientation{{0.0f, 1.0f, 0.0f}, -azimuth_};
+        player_orientation.normalise();
+        player_->set_orientation(player_orientation);
+    }
 }
 
 iris::Camera *ThirdPersonCamera::camera()

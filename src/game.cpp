@@ -18,6 +18,7 @@
 #include "iris/core/camera.h"
 #include "iris/core/colour.h"
 #include "iris/core/looper.h"
+#include "iris/core/resource_loader.h"
 #include "iris/core/root.h"
 #include "iris/core/transform.h"
 #include "iris/events/event.h"
@@ -55,6 +56,8 @@ Game::Game()
 
 void Game::run()
 {
+    iris::ResourceLoader::instance().set_root_directory("assets");
+
     // window and camera setup - we will use a 3rd person camera for this game
     auto *window = iris::Root::window_manager().create_window(800u, 800u);
 

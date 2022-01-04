@@ -10,3 +10,4 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory("src")
 
+file(COPY assets DESTINATION ${PROJECT_BINARY_DIR}/src)

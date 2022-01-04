@@ -14,7 +14,10 @@
 #include "iris/core/root.h"
 #include "iris/core/transform.h"
 #include "iris/events/keyboard_event.h"
+#include "iris/graphics/bone.h"
 #include "iris/graphics/mesh_manager.h"
+#include "iris/graphics/render_graph/render_graph.h"
+#include "iris/graphics/render_graph/texture_node.h"
 #include "iris/graphics/scene.h"
 #include "iris/log/log.h"
 #include "iris/physics/contact_point.h"
@@ -35,22 +38,33 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps)
     , character_controller_(nullptr)
     , sword_(nullptr)
     , sword_body_(nullptr)
-    , sword_angle_(pi_2)
     , attacking_(false)
     , attack_stop_()
-    , attack_duration_(300ms)
+    , attack_duration_(800ms)
     , ps_(ps)
+    , current_animation_("CharacterArmature|Idle_Weapon")
 {
     auto &mesh_manager = iris::Root::mesh_manager();
 
-    render_entity_ = scene.create_entity(
-        nullptr, mesh_manager.cube({0.2f, 0.2f, 0.2f}), iris::Transform{{}, {}, {0.5f, 1.7f, 0.5f}});
+    auto *render_graph = scene.create_render_graph();
+    auto *texture = render_graph->create<iris::TextureNode>("Warrior_Texture.png");
+    render_graph->render_node()->set_colour_input(texture);
 
+    render_entity_ = scene.create_entity(
+        render_graph,
+        mesh_manager.load_mesh("Warrior.fbx"),
+        iris::Transform{{}, {}, {0.01f}},
+        mesh_manager.load_skeleton("Warrior.fbx"));
+    render_entity_->skeleton().set_animation(current_animation_);
+
+    auto *render_graph2 = scene.create_render_graph();
+    auto *texture2 = render_graph2->create<iris::TextureNode>("Sword_Texture.png");
+    render_graph2->render_node()->set_colour_input(texture2);
     sword_ = scene.create_entity(
-        nullptr, mesh_manager.cube({0.0f, 0.5f, 1.0f}), iris::Transform{{}, {}, {1.0f, 0.1f, 0.1f}});
+        render_graph2, mesh_manager.load_mesh("Sword.fbx"), iris::Transform{{}, {}, {1.0f, 0.1f, 0.1f}});
 
     sword_body_ =
-        ps->create_rigid_body({}, ps->create_box_collision_shape({1.0f, 0.1f, 0.1f}), iris::RigidBodyType::GHOST);
+        ps->create_rigid_body({}, ps->create_box_collision_shape({0.1f, 0.1f, 1.0f}), iris::RigidBodyType::GHOST);
     sword_body_->set_name("sword");
 
     character_controller_ = ps->create_character_controller();
@@ -69,17 +83,7 @@ void Player::update()
         {
             // attack has completed so reset state
             attacking_ = false;
-            sword_angle_ = pi_2;
-        }
-        else
-        {
-            // get percentage of elapsed attack time
-            const auto remaining = std::chrono::duration_cast<std::chrono::milliseconds>(attack_stop_ - now);
-            const auto remaining_percentage =
-                static_cast<float>(remaining.count()) / static_cast<float>(attack_duration_.count());
-
-            // set sword angle based on how much tune has elapsed, this creates the sword swing
-            sword_angle_ = -((pi * remaining_percentage) + pi_2);
+            render_entity_->skeleton().set_animation("CharacterArmature|Idle_Weapon");
         }
 
         // get all contact points the sword is making (ignoring the player) and publish a message
@@ -93,25 +97,42 @@ void Player::update()
     }
 
     render_entity_->set_position(character_controller_->position());
+    render_entity_->skeleton().advance();
+
+    // offset of player in world space
+    static constexpr iris::Vector3 player_world_offset{0.0f, -1.2f, 0.0f};
+    static constexpr auto player_world_offset_transform = iris::Matrix4::make_translate(player_world_offset);
 
     // local transform of sword
-    const auto sword_rot = iris::Matrix4(iris::Quaternion{{0.0f, 1.0f, 0.0f}, sword_angle_});
-    const auto sword_translate = iris::Matrix4::make_translate({1.0f, 0.0f, 0.0f});
-    const auto sword_scale = iris::Matrix4::make_scale({1.0f, 0.1f, 0.1f});
+    const auto sword_rot =
+        iris::Matrix4(iris::Quaternion{{0.0f, 1.0f, 0.0f}, -pi_2} * iris::Quaternion{{0.0f, 0.0f, 1.0f}, pi_2});
+    const auto sword_translate = iris::Matrix4::make_translate({0.0f, 0.0f, 0.0f});
+    const auto sword_scale = iris::Matrix4::make_scale({1.0f});
     const auto sword_transform = sword_rot * sword_translate * sword_scale;
 
-    // player transform (without scale)
-    const auto player_transform =
-        iris::Matrix4::make_translate(render_entity_->position()) * iris::Matrix4{render_entity_->orientation()};
+    // bone to attach sword to
+    const auto bone_index = render_entity_->skeleton().bone_index("Weapon.R");
+    const auto &bone = render_entity_->skeleton().bone(bone_index);
+    const auto bone_transform = render_entity_->skeleton().transform(bone_index);
+
+    static constexpr iris::Vector3 sword_body_offset{-1.0f, 0.0f, 0.0f};
+
+    // get bone in transform in world space
+    const auto bone_to_world_space = player_world_offset_transform * render_entity_->transform() * bone_transform *
+                                     iris::Matrix4::invert(bone.offset());
+    const iris::Transform sword_body_transform{
+        bone_to_world_space * iris::Matrix4::make_translate(sword_body_offset) * sword_transform};
 
     // compound transform for sword
-    sword_->set_transform(player_transform * sword_transform);
-    sword_body_->reposition(sword_->position(), sword_->orientation());
+    sword_->set_transform(bone_to_world_space * sword_transform);
+    sword_body_->reposition(sword_body_transform.translation(), sword_body_transform.rotation());
+
+    render_entity_->set_position(render_entity_->position() + player_world_offset);
 }
 
 void Player::set_orientation(const iris::Quaternion &orientation)
 {
-    render_entity_->set_orientation(orientation);
+    render_entity_->set_orientation(orientation * iris::Quaternion{{0.0f, 1.0f, 0.0f}, -M_PI_2});
 }
 
 void Player::set_walk_direction(const iris::Vector3 &direction)
@@ -131,12 +152,28 @@ void Player::handle_message(MessageType message_type, const std::any &data)
         case MessageType::KEY_PRESS:
         {
             const auto key = std::any_cast<iris::KeyboardEvent>(data);
-
-            // player can only attack if not attacking
-            if ((key.key == iris::Key::SPACE) && (key.state == iris::KeyState::DOWN) && !attacking_)
+            if (!attacking_)
             {
-                attacking_ = true;
-                attack_stop_ = std::chrono::system_clock::now() + attack_duration_;
+                // player can only attack if not attacking
+                if ((key.key == iris::Key::SPACE) && (key.state == iris::KeyState::DOWN))
+                {
+                    attacking_ = true;
+                    attack_stop_ = std::chrono::system_clock::now() + attack_duration_;
+                    current_animation_ = "CharacterArmature|Sword_Attack";
+                    render_entity_->skeleton().set_animation(current_animation_);
+                }
+
+                if ((key.key == iris::Key::W) || (key.key == iris::Key::A) || (key.key == iris::Key::S) ||
+                    (key.key == iris::Key::D))
+                {
+                    const auto next_animation =
+                        key.state == iris::KeyState::DOWN ? "CharacterArmature|Run" : "CharacterArmature|Idle_Weapon";
+                    if (next_animation != current_animation_)
+                    {
+                        current_animation_ = next_animation;
+                        render_entity_->skeleton().set_animation(current_animation_);
+                    }
+                }
             }
 
             break;
