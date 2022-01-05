@@ -25,4 +25,4 @@ target_include_directories(trinket PRIVATE ${INCLUDE_ROOT})
 
 find_package(iris REQUIRED PATHS ${PROJECT_SOURCE_DIR}/third_party/iris/lib/cmake/iris NO_DEFAULT_PATH)
 
-target_link_libraries(trinket iris::iris)
+target_link_libraries(trinket iris::iris yaml-cpp)
