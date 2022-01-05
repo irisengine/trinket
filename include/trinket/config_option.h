@@ -6,28 +6,14 @@
 
 #pragma once
 
-#include <any>
-#include <memory>
-
-#include "config.h"
-#include "message_type.h"
-#include "subscriber.h"
-
 namespace trinket
 {
 
-class Game : public Subscriber
+enum class ConfigOption
 {
-  public:
-    Game(std::unique_ptr<Config> config);
-
-    void run();
-
-    void handle_message(MessageType message_type, const std::any &data) override;
-
-  private:
-    bool running_;
-    std::unique_ptr<Config> config_;
+    SCREEN_WIDTH,
+    SCREEN_HEIGHT,
+    GRAPHICS_API,
 };
 
 }

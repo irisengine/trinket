@@ -6,28 +6,29 @@
 
 #pragma once
 
-#include <any>
-#include <memory>
+#include <cstdint>
+#include <string>
+#include <unordered_map>
+#include <variant>
 
 #include "config.h"
-#include "message_type.h"
-#include "subscriber.h"
+#include "config_option.h"
 
 namespace trinket
 {
 
-class Game : public Subscriber
+class YamlConfig : public Config
 {
   public:
-    Game(std::unique_ptr<Config> config);
+    YamlConfig(const std::string &config_file);
+    ~YamlConfig() override = default;
 
-    void run();
-
-    void handle_message(MessageType message_type, const std::any &data) override;
+    std::string string_option(ConfigOption option) override;
+    std::uint32_t uint32_option(ConfigOption option) override;
 
   private:
-    bool running_;
-    std::unique_ptr<Config> config_;
+    using ConfigTypes = std::variant<std::string, std::uint32_t>;
+    std::unordered_map<ConfigOption, ConfigTypes> options_;
 };
 
 }

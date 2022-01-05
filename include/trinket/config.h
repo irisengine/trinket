@@ -6,28 +6,20 @@
 
 #pragma once
 
-#include <any>
-#include <memory>
+#include <cstdint>
+#include <string>
 
-#include "config.h"
-#include "message_type.h"
-#include "subscriber.h"
+#include "config_option.h"
 
 namespace trinket
 {
 
-class Game : public Subscriber
+class Config
 {
   public:
-    Game(std::unique_ptr<Config> config);
-
-    void run();
-
-    void handle_message(MessageType message_type, const std::any &data) override;
-
-  private:
-    bool running_;
-    std::unique_ptr<Config> config_;
+    virtual ~Config() = default;
+    virtual std::string string_option(ConfigOption option) = 0;
+    virtual std::uint32_t uint32_option(ConfigOption option) = 0;
 };
 
 }

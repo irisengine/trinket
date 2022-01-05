@@ -24,6 +24,8 @@
 #include "iris/events/event.h"
 #include "iris/graphics/mesh_manager.h"
 #include "iris/graphics/render_entity.h"
+#include "iris/graphics/render_graph/render_graph.h"
+#include "iris/graphics/render_graph/texture_node.h"
 #include "iris/graphics/render_pass.h"
 #include "iris/graphics/scene.h"
 #include "iris/graphics/texture_manager.h"
@@ -35,9 +37,11 @@
 #include "iris/physics/rigid_body.h"
 #include "iris/physics/rigid_body_type.h"
 
+#include "config.h"
 #include "enemy.h"
 #include "game_object.h"
 #include "input_handler.h"
+#include "maths.h"
 #include "message_type.h"
 #include "player.h"
 #include "publisher.h"
@@ -48,18 +52,23 @@ using namespace std::literals::chrono_literals;
 namespace trinket
 {
 
-Game::Game()
+Game::Game(std::unique_ptr<Config> config)
     : running_(true)
+    , config_(std::move(config))
 {
     subscribe(MessageType::QUIT);
 }
 
 void Game::run()
 {
-    iris::ResourceLoader::instance().set_root_directory("assets");
+    if (const auto &graphics_api = config_->string_option(ConfigOption::GRAPHICS_API); graphics_api != "default")
+    {
+        iris::Root::set_graphics_api(graphics_api);
+    }
 
     // window and camera setup - we will use a 3rd person camera for this game
-    auto *window = iris::Root::window_manager().create_window(800u, 800u);
+    auto *window = iris::Root::window_manager().create_window(
+        config_->uint32_option(ConfigOption::SCREEN_WIDTH), config_->uint32_option(ConfigOption::SCREEN_HEIGHT));
 
     auto &mesh_manager = iris::Root::mesh_manager();
 

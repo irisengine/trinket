@@ -5,11 +5,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
+#include <memory>
 
+#include "iris/core/resource_loader.h"
 #include "iris/core/start.h"
 #include "iris/iris_version.h"
 
 #include "game.h"
+#include "yaml_config.h"
 
 void go(int, char **)
 {
@@ -20,7 +23,9 @@ void go(int, char **)
 
     std::cout << "hello trinket" << std::endl;
 
-    trinket::Game game{};
+    iris::ResourceLoader::instance().set_root_directory("assets");
+
+    trinket::Game game{std::make_unique<trinket::YamlConfig>("config.yml")};
     game.run();
 }
 
