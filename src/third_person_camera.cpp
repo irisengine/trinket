@@ -13,6 +13,7 @@
 #include "iris/core/vector3.h"
 #include "iris/events/event.h"
 #include "iris/events/keyboard_event.h"
+#include "iris/log/log.h"
 
 #include "maths.h"
 #include "player.h"
@@ -111,21 +112,14 @@ void ThirdPersonCamera::handle_message(MessageType message_type, const std::any 
             azimuth_ += mouse.delta_x * sensitivity;
             camera_.adjust_yaw(mouse.delta_x * sensitivity);
 
+            static constexpr auto offset = 0.01f;
+
             // adjust camera altitude and ensure we are still pointing at the player
             // we clamp the altitude [0, pi/2] to ensure no weirdness happens
             altitude_ += mouse.delta_y * sensitivity;
-            if (altitude_ <= 0.0f)
-            {
-                altitude_ = 0.0f;
-            }
-            else if (altitude_ >= pi_2)
-            {
-                altitude_ = pi_2;
-            }
-            else
-            {
-                camera_.adjust_pitch(-mouse.delta_y * sensitivity);
-            }
+            altitude_ = std::clamp(altitude_, 0.0f, pi_2 - offset);
+
+            camera_.set_pitch(-altitude_);
 
             break;
         }
