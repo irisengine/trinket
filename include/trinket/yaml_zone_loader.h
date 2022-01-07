@@ -6,30 +6,29 @@
 
 #pragma once
 
-#include <any>
 #include <memory>
+#include <string>
+#include <vector>
 
-#include "config.h"
-#include "message_type.h"
-#include "subscriber.h"
+#include "iris/core/quaternion.h"
+#include "iris/core/vector3.h"
+#include "iris/graphics/render_graph/render_graph.h"
+#include "iris/physics/collision_shape.h"
+
 #include "zone_loader.h"
 
 namespace trinket
 {
 
-class Game : public Subscriber
+class YamlZoneLoader : public ZoneLoader
 {
   public:
-    Game(std::unique_ptr<Config> config, std::unique_ptr<ZoneLoader> zone_loader);
-
-    void run();
-
-    void handle_message(MessageType message_type, const std::any &data) override;
+    YamlZoneLoader(const std::string &zone_file);
+    ~YamlZoneLoader() override = default;
+    std::vector<StaticGeometry> static_geometry() override;
 
   private:
-    bool running_;
-    std::unique_ptr<Config> config_;
-    std::unique_ptr<ZoneLoader> zone_loader_;
+    std::string zone_file_;
 };
 
 }

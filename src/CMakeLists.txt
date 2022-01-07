@@ -14,6 +14,8 @@ add_executable(trinket
     ${INCLUDE_ROOT}/subscriber.h
     ${INCLUDE_ROOT}/third_person_camera.h
     ${INCLUDE_ROOT}/yaml_config.h
+    ${INCLUDE_ROOT}/yaml_zone_loader.h
+    ${INCLUDE_ROOT}/zone_loader.h
     enemy.cpp
     game.cpp
     input_handler.cpp
@@ -23,7 +25,8 @@ add_executable(trinket
     publisher.cpp
     subscriber.cpp
     third_person_camera.cpp
-    yaml_config.cpp)
+    yaml_config.cpp
+    yaml_zone_loader.cpp)
 
 target_include_directories(trinket PRIVATE ${INCLUDE_ROOT})
 

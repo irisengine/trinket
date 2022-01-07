@@ -1,0 +1,14 @@
+---
+static_geometry:
+  - position: [0.0, -1002.0, 0.0]
+    orientation: [0.0, 0.0, 0.0]
+    scale: [1000.0, 1000.0, 1000.0]
+    mesh_type: "cube"
+    texture: "grass.png"
+    rigid_body: true
+  - position: [0.0, -2.2, 20.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [7.0, 7.0, 7.0]
+    mesh_type: "Inn.fbx"
+    texture: "Inn_Texture.png"
+    rigid_body: false

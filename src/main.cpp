@@ -8,11 +8,14 @@
 #include <memory>
 
 #include "iris/core/resource_loader.h"
+#include "iris/core/root.h"
 #include "iris/core/start.h"
 #include "iris/iris_version.h"
+#include "iris/physics/physics_manager.h"
 
 #include "game.h"
 #include "yaml_config.h"
+#include "yaml_zone_loader.h"
 
 void go(int, char **)
 {
@@ -24,8 +27,16 @@ void go(int, char **)
     std::cout << "hello trinket" << std::endl;
 
     iris::ResourceLoader::instance().set_root_directory("assets");
+    iris::Root::physics_manager().create_physics_system();
+    auto config = std::make_unique<trinket::YamlConfig>("config.yml");
 
-    trinket::Game game{std::make_unique<trinket::YamlConfig>("config.yml")};
+    if (const auto &graphics_api = config->string_option(trinket::ConfigOption::GRAPHICS_API);
+        graphics_api != "default")
+    {
+        iris::Root::set_graphics_api(graphics_api);
+    }
+
+    trinket::Game game{std::move(config), std::make_unique<trinket::YamlZoneLoader>("town_zone.yml")};
     game.run();
 }
 
