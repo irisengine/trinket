@@ -30,7 +30,7 @@ namespace trinket
 class Player : public GameObject, Publisher, Subscriber
 {
   public:
-    Player(iris::Scene &scene, iris::PhysicsSystem *ps);
+    Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 &start_position);
     ~Player() override = default;
 
     void update() override;

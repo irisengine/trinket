@@ -2,3 +2,4 @@
 screen_width: 800
 screen_height: 800
 graphics_api: default
+physics_debug_draw: false

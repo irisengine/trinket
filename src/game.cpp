@@ -81,13 +81,6 @@ void Game::run()
 
     auto *ps = iris::Root::physics_manager().current_physics_system();
 
-    // auto *render_graph = scene.create_render_graph();
-    // auto *texture = render_graph->create<iris::TextureNode>("Inn_Texture.png");
-    // render_graph->render_node()->set_colour_input(texture);
-    // scene.create_entity(
-    //    render_graph,
-    //    mesh_manager.load_mesh("Inn.fbx"),
-    //    iris::Transform{{0.0f, -1.0f, 20.0f}, {{1.0f, 0.0f, 0.0f}, -pi_2}, {8.0f}});
     for (auto &geometry : zone_loader_->static_geometry())
     {
         scene.create_entity(
@@ -103,14 +96,18 @@ void Game::run()
     }
 
     auto debug_mesh = mesh_manager.unique_cube({});
-    auto *debug_draw = scene.create_entity(nullptr, debug_mesh.get(), iris::Vector3{}, iris::PrimitiveType::LINES);
-    ps->enable_debug_draw(debug_draw);
+
+    if (config_->bool_option(ConfigOption::PHYSICS_DEBUG_DRAW))
+    {
+        auto *debug_draw = scene.create_entity(nullptr, debug_mesh.get(), iris::Vector3{}, iris::PrimitiveType::LINES);
+        ps->enable_debug_draw(debug_draw);
+    }
 
     std::vector<std::unique_ptr<GameObject>> objects{};
     objects.emplace_back(std::make_unique<InputHandler>(window));
     objects.emplace_back(std::make_unique<Enemy>(iris::Vector3{10.0f, 0.0f, 0.0f}, scene, ps));
 
-    objects.emplace_back(std::make_unique<Player>(scene, ps));
+    objects.emplace_back(std::make_unique<Player>(scene, ps, zone_loader_->player_start_position()));
     auto *player = static_cast<Player *>(objects.back().get());
 
     objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window->width(), window->height()));

@@ -14,6 +14,7 @@
 #include "iris/core/vector3.h"
 #include "iris/graphics/render_graph/render_graph.h"
 #include "iris/physics/collision_shape.h"
+#include "yaml-cpp/yaml.h"
 
 #include "zone_loader.h"
 
@@ -25,10 +26,11 @@ class YamlZoneLoader : public ZoneLoader
   public:
     YamlZoneLoader(const std::string &zone_file);
     ~YamlZoneLoader() override = default;
+    iris::Vector3 player_start_position() override;
     std::vector<StaticGeometry> static_geometry() override;
 
   private:
-    std::string zone_file_;
+    YAML::Node yaml_file_;
 };
 
 }

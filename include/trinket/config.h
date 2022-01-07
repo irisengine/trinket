@@ -20,6 +20,7 @@ class Config
     virtual ~Config() = default;
     virtual std::string string_option(ConfigOption option) = 0;
     virtual std::uint32_t uint32_option(ConfigOption option) = 0;
+    virtual bool bool_option(ConfigOption option) = 0;
 };
 
 }

@@ -25,9 +25,10 @@ class YamlConfig : public Config
 
     std::string string_option(ConfigOption option) override;
     std::uint32_t uint32_option(ConfigOption option) override;
+    bool bool_option(ConfigOption option) override;
 
   private:
-    using ConfigTypes = std::variant<std::string, std::uint32_t>;
+    using ConfigTypes = std::variant<std::string, std::uint32_t, bool>;
     std::unordered_map<ConfigOption, ConfigTypes> options_;
 };
 

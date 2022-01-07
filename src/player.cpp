@@ -33,7 +33,7 @@ using namespace std::literals::chrono_literals;
 namespace trinket
 {
 
-Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps)
+Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 &start_position)
     : render_entity_(nullptr)
     , character_controller_(nullptr)
     , sword_(nullptr)
@@ -53,7 +53,7 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps)
     render_entity_ = scene.create_entity(
         render_graph,
         mesh_manager.load_mesh("Warrior.fbx"),
-        iris::Transform{{}, {}, {0.01f}},
+        iris::Transform{start_position, {}, {0.01f}},
         mesh_manager.load_skeleton("Warrior.fbx"));
     render_entity_->skeleton().set_animation(current_animation_);
 

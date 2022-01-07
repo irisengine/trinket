@@ -14,6 +14,7 @@ enum class ConfigOption
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
     GRAPHICS_API,
+    PHYSICS_DEBUG_DRAW,
 };
 
 }

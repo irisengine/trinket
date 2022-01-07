@@ -45,6 +45,7 @@ YamlConfig::YamlConfig(const std::string &config_file)
     options_[ConfigOption::SCREEN_WIDTH] = yaml_config["screen_width"].as<std::uint32_t>();
     options_[ConfigOption::SCREEN_HEIGHT] = yaml_config["screen_height"].as<std::uint32_t>();
     options_[ConfigOption::GRAPHICS_API] = yaml_config["graphics_api"].as<std::string>();
+    options_[ConfigOption::PHYSICS_DEBUG_DRAW] = yaml_config["physics_debug_draw"].as<bool>();
 }
 
 std::string YamlConfig::string_option(ConfigOption option)
@@ -55,6 +56,11 @@ std::string YamlConfig::string_option(ConfigOption option)
 std::uint32_t YamlConfig::uint32_option(ConfigOption option)
 {
     return get_config_option<std::uint32_t>(options_, option);
+}
+
+bool YamlConfig::bool_option(ConfigOption option)
+{
+    return get_config_option<bool>(options_, option);
 }
 
 }

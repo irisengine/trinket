@@ -32,6 +32,7 @@ class ZoneLoader
 {
   public:
     virtual ~ZoneLoader() = default;
+    virtual iris::Vector3 player_start_position() = 0;
     virtual std::vector<StaticGeometry> static_geometry() = 0;
 };
 

@@ -42,22 +42,26 @@ namespace trinket
 {
 
 YamlZoneLoader::YamlZoneLoader(const std::string &zone_file)
-    : zone_file_(zone_file)
+    : yaml_file_()
 {
+    const auto config_file_data = iris::ResourceLoader::instance().load(zone_file);
+    std::string config_file_str(reinterpret_cast<const char *>(config_file_data.data()), config_file_data.size());
+
+    yaml_file_ = ::YAML::Load(config_file_str);
+}
+
+iris::Vector3 YamlZoneLoader::player_start_position()
+{
+    return get_vector3(yaml_file_["player_start_position"]);
 }
 
 std::vector<StaticGeometry> YamlZoneLoader::static_geometry()
 {
     std::vector<StaticGeometry> static_geometry{};
 
-    const auto config_file_data = iris::ResourceLoader::instance().load(zone_file_);
-    std::string config_file_str(reinterpret_cast<const char *>(config_file_data.data()), config_file_data.size());
-
-    const auto yaml_zone = ::YAML::Load(config_file_str);
-
     auto *ps = iris::Root::physics_manager().current_physics_system();
 
-    for (const auto &geometry : yaml_zone["static_geometry"])
+    for (const auto &geometry : yaml_file_["static_geometry"])
     {
         const auto scale = get_vector3(geometry["scale"]);
         const auto mesh_type = geometry["mesh_type"].as<std::string>();
@@ -69,16 +73,18 @@ std::vector<StaticGeometry> YamlZoneLoader::static_geometry()
         auto *texture_node = render_graph->create<iris::TextureNode>(texture_name);
         render_graph->render_node()->set_colour_input(texture_node);
 
+        auto *collision_shape =
+            geometry["rigid_body"].as<bool>() ? ps->create_mesh_collision_shape(mesh, scale) : nullptr;
+
         static_geometry.push_back(
             {.position = get_vector3(geometry["position"]),
              .orientation = get_quaternion(geometry["orientation"]),
              .scale = scale,
              .mesh = mesh,
              .render_graph = std::move(render_graph),
-             .collision_shape = ps->create_mesh_collision_shape(mesh, scale)});
+             .collision_shape = collision_shape});
     }
 
     return static_geometry;
 }
-
 }
