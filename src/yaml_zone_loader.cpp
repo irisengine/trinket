@@ -77,6 +77,11 @@ YamlZoneLoader::YamlZoneLoader(const std::string &zone_file)
     yaml_file_ = ::YAML::Load(config_file_str);
 }
 
+std::string YamlZoneLoader::name()
+{
+    return yaml_file_["name"].as<std::string>();
+}
+
 iris::Vector3 YamlZoneLoader::player_start_position()
 {
     return get_vector3(yaml_file_["player_start_position"]);
@@ -119,4 +124,14 @@ std::vector<StaticGeometry> YamlZoneLoader::static_geometry()
 
     return static_geometry;
 }
+
+std::tuple<iris::Transform, std::string> YamlZoneLoader::portal()
+{
+    const auto portal = *yaml_file_["portal"].begin();
+
+    return {
+        iris::Transform{get_vector3(portal["position"]), {}, get_vector3(portal["scale"])},
+        portal["destination"].as<std::string>()};
+}
+
 }

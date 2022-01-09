@@ -26,8 +26,10 @@ class YamlZoneLoader : public ZoneLoader
   public:
     YamlZoneLoader(const std::string &zone_file);
     ~YamlZoneLoader() override = default;
+    std::string name() override;
     iris::Vector3 player_start_position() override;
     std::vector<StaticGeometry> static_geometry() override;
+    std::tuple<iris::Transform, std::string> portal() override;
 
   private:
     YAML::Node yaml_file_;

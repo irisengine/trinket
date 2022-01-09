@@ -8,6 +8,11 @@
 
 #include <any>
 #include <memory>
+#include <string>
+#include <vector>
+
+#include "iris/graphics/window.h"
+#include "iris/physics/rigid_body.h"
 
 #include "config.h"
 #include "message_type.h"
@@ -20,16 +25,23 @@ namespace trinket
 class Game : public Subscriber
 {
   public:
-    Game(std::unique_ptr<Config> config, std::unique_ptr<ZoneLoader> zone_loader);
+    Game(std::unique_ptr<Config> config, std::vector<std::unique_ptr<ZoneLoader>> &&zone_loaders);
 
     void run();
 
     void handle_message(MessageType message_type, const std::any &data) override;
 
   private:
+    void run_zone();
+
     bool running_;
     std::unique_ptr<Config> config_;
-    std::unique_ptr<ZoneLoader> zone_loader_;
+    std::vector<std::unique_ptr<ZoneLoader>> zone_loaders_;
+    ZoneLoader *current_zone_;
+    ZoneLoader *next_zone_;
+    iris::Window *window_;
+    iris::RigidBody *portal_;
+    std::string portal_destination_;
 };
 
 }

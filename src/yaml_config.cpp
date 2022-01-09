@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "iris/core/error_handling.h"
 #include "iris/core/exception.h"
@@ -46,6 +47,8 @@ YamlConfig::YamlConfig(const std::string &config_file)
     options_[ConfigOption::SCREEN_HEIGHT] = yaml_config["screen_height"].as<std::uint32_t>();
     options_[ConfigOption::GRAPHICS_API] = yaml_config["graphics_api"].as<std::string>();
     options_[ConfigOption::PHYSICS_DEBUG_DRAW] = yaml_config["physics_debug_draw"].as<bool>();
+    options_[ConfigOption::ZONE_LOADERS] = yaml_config["zones"].as<std::vector<std::string>>();
+    options_[ConfigOption::STARTING_ZONE] = yaml_config["starting_zone"].as<std::string>();
 }
 
 std::string YamlConfig::string_option(ConfigOption option)
@@ -61,6 +64,11 @@ std::uint32_t YamlConfig::uint32_option(ConfigOption option)
 bool YamlConfig::bool_option(ConfigOption option)
 {
     return get_config_option<bool>(options_, option);
+}
+
+std::vector<std::string> YamlConfig::string_array_option(ConfigOption option)
+{
+    return get_config_option<std::vector<std::string>>(options_, option);
 }
 
 }

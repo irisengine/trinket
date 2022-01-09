@@ -38,6 +38,7 @@ class Player : public GameObject, Publisher, Subscriber
     void set_orientation(const iris::Quaternion &orientation);
     void set_walk_direction(const iris::Vector3 &direction);
     iris::Vector3 position() const;
+    const iris::RigidBody *rigid_body() const;
 
     void handle_message(MessageType message_type, const std::any &data) override;
 

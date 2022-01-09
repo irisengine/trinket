@@ -17,6 +17,7 @@
 
 #include "iris/core/camera.h"
 #include "iris/core/colour.h"
+#include "iris/core/error_handling.h"
 #include "iris/core/looper.h"
 #include "iris/core/root.h"
 #include "iris/core/transform.h"
@@ -52,26 +53,52 @@ using namespace std::literals::chrono_literals;
 namespace trinket
 {
 
-Game::Game(std::unique_ptr<Config> config, std::unique_ptr<ZoneLoader> zone_loader)
+Game::Game(std::unique_ptr<Config> config, std::vector<std::unique_ptr<ZoneLoader>> &&zone_loaders)
     : running_(true)
     , config_(std::move(config))
-    , zone_loader_(std::move(zone_loader))
+    , zone_loaders_(std::move(zone_loaders))
+    , current_zone_(nullptr)
+    , next_zone_(nullptr)
+    , window_(nullptr)
+    , portal_(nullptr)
+    , portal_destination_()
+
 {
+    const auto starting_zone_name = config_->string_option(ConfigOption::STARTING_ZONE);
+
+    auto starting_zone = std::find_if(
+        std::begin(zone_loaders_),
+        std::end(zone_loaders_),
+        [&starting_zone_name](auto &element) { return element->name() == starting_zone_name; });
+
+    iris::ensure(starting_zone != std::end(zone_loaders_), "missing starting zone");
+
+    next_zone_ = starting_zone->get();
+
     subscribe(MessageType::QUIT);
+    subscribe(MessageType::KEY_PRESS);
 }
 
 void Game::run()
 {
-    // window and camera setup - we will use a 3rd person camera for this game
-    auto *window = iris::Root::window_manager().create_window(
+    window_ = iris::Root::window_manager().create_window(
         config_->uint32_option(ConfigOption::SCREEN_WIDTH), config_->uint32_option(ConfigOption::SCREEN_HEIGHT));
 
+    do
+    {
+        current_zone_ = next_zone_;
+        next_zone_ = nullptr;
+
+        run_zone();
+    } while (running_);
+}
+
+void Game::run_zone()
+{
     auto &mesh_manager = iris::Root::mesh_manager();
 
     // basic scene setup
     iris::Scene scene{};
-    auto *box = scene.create_entity(
-        nullptr, mesh_manager.cube({}), iris::Transform{{-10.0f, 0.0f, 0.0f}, {}, {0.5f, 1.7f, 0.5f}});
 
     scene.set_ambient_light({0.2f, 0.2f, 0.2f, 1.0f});
     scene.create_light<iris::PointLight>(iris::Vector3{10.0f}, iris::Colour{100.0f, 100.0f, 100.0f});
@@ -79,9 +106,9 @@ void Game::run()
     const auto sky_box = iris::Root::texture_manager().create(
         iris::Colour{0.275f, 0.51f, 0.796f}, iris::Colour{0.5f, 0.5f, 0.5f}, 2048u, 2048u);
 
-    auto *ps = iris::Root::physics_manager().current_physics_system();
+    auto *ps = iris::Root::physics_manager().create_physics_system();
 
-    for (auto &geometry : zone_loader_->static_geometry())
+    for (auto &geometry : current_zone_->static_geometry())
     {
         scene.create_entity(
             scene.add(std::move(geometry.render_graph)),
@@ -95,6 +122,14 @@ void Game::run()
         }
     }
 
+    const auto [portal_transform, destination] = current_zone_->portal();
+    scene.create_entity(nullptr, mesh_manager.cube({}), portal_transform);
+    portal_ = ps->create_rigid_body(
+        portal_transform.translation(),
+        ps->create_box_collision_shape(portal_transform.scale()),
+        iris::RigidBodyType::GHOST);
+    portal_destination_ = destination;
+
     auto debug_mesh = mesh_manager.unique_cube({});
 
     if (config_->bool_option(ConfigOption::PHYSICS_DEBUG_DRAW))
@@ -104,27 +139,40 @@ void Game::run()
     }
 
     std::vector<std::unique_ptr<GameObject>> objects{};
-    objects.emplace_back(std::make_unique<InputHandler>(window));
+    objects.emplace_back(std::make_unique<InputHandler>(window_));
     objects.emplace_back(std::make_unique<Enemy>(iris::Vector3{10.0f, 0.0f, 0.0f}, scene, ps));
 
-    objects.emplace_back(std::make_unique<Player>(scene, ps, zone_loader_->player_start_position()));
+    objects.emplace_back(std::make_unique<Player>(scene, ps, current_zone_->player_start_position()));
     auto *player = static_cast<Player *>(objects.back().get());
 
-    objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window->width(), window->height()));
+    objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window_->width(), window_->height()));
     auto *camera = static_cast<ThirdPersonCamera *>(objects.back().get());
 
-    ps->create_rigid_body(
-        box->position(), ps->create_box_collision_shape({0.5f, 1.7f, 0.5f}), iris::RigidBodyType::STATIC);
-
     iris::RenderPass render_pass{&scene, camera->camera(), nullptr, sky_box};
-    window->set_render_passes({render_pass});
+    window_->set_render_passes({render_pass});
 
     iris::Looper looper{
         0ms,
         16ms,
-        [ps](auto, std::chrono::microseconds delta)
+        [ps, player, this](auto, std::chrono::microseconds delta)
         {
             ps->step(std::chrono::duration_cast<std::chrono::milliseconds>(delta));
+
+            for (const auto &contact : ps->contacts(portal_))
+            {
+                if (contact.contact_b == player->rigid_body())
+                {
+                    auto destination = std::find_if(
+                        std::begin(zone_loaders_),
+                        std::end(zone_loaders_),
+                        [this](auto &element) { return element->name() == portal_destination_; });
+
+                    iris::ensure(destination != std::cend(zone_loaders_), "missing zone");
+
+                    next_zone_ = destination->get();
+                }
+            }
+
             return true;
         },
         [&](auto, auto)
@@ -134,9 +182,9 @@ void Game::run()
                 object->update();
             }
 
-            window->render();
+            window_->render();
 
-            return running_;
+            return running_ && (next_zone_ == nullptr);
         }};
 
     looper.run();
@@ -147,6 +195,15 @@ void Game::handle_message(MessageType message_type, const std::any &data)
     switch (message_type)
     {
         case MessageType::QUIT: running_ = false; break;
+        case MessageType::KEY_PRESS:
+        {
+            const auto key = std::any_cast<iris::KeyboardEvent>(data);
+            if ((key.key == iris::Key::R) && (key.state == iris::KeyState::DOWN))
+            {
+                next_zone_ = current_zone_;
+            }
+            break;
+        }
         default: break;
     }
 }

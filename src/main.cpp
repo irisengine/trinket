@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <memory>
+#include <vector>
 
 #include "iris/core/resource_loader.h"
 #include "iris/core/root.h"
@@ -27,7 +28,6 @@ void go(int, char **)
     std::cout << "hello trinket" << std::endl;
 
     iris::ResourceLoader::instance().set_root_directory("assets");
-    iris::Root::physics_manager().create_physics_system();
     auto config = std::make_unique<trinket::YamlConfig>("config.yml");
 
     if (const auto &graphics_api = config->string_option(trinket::ConfigOption::GRAPHICS_API);
@@ -36,7 +36,13 @@ void go(int, char **)
         iris::Root::set_graphics_api(graphics_api);
     }
 
-    trinket::Game game{std::move(config), std::make_unique<trinket::YamlZoneLoader>("town_zone.yml")};
+    std::vector<std::unique_ptr<trinket::ZoneLoader>> zone_loaders{};
+    for (const auto &zone_file : config->string_array_option(trinket::ConfigOption::ZONE_LOADERS))
+    {
+        zone_loaders.emplace_back(std::make_unique<trinket::YamlZoneLoader>(zone_file));
+    }
+
+    trinket::Game game{std::move(config), std::move(zone_loaders)};
     game.run();
 }
 

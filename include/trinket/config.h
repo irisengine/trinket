@@ -8,6 +8,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #include "config_option.h"
 
@@ -21,6 +22,7 @@ class Config
     virtual std::string string_option(ConfigOption option) = 0;
     virtual std::uint32_t uint32_option(ConfigOption option) = 0;
     virtual bool bool_option(ConfigOption option) = 0;
+    virtual std::vector<std::string> string_array_option(ConfigOption option) = 0;
 };
 
 }

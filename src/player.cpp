@@ -145,6 +145,11 @@ iris::Vector3 Player::position() const
     return character_controller_->position();
 }
 
+const iris::RigidBody *Player::rigid_body() const
+{
+    return character_controller_->rigid_body();
+}
+
 void Player::handle_message(MessageType message_type, const std::any &data)
 {
     switch (message_type)

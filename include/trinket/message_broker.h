@@ -24,6 +24,7 @@ class MessageBroker
     static MessageBroker &instance();
 
     void subscribe(Subscriber *subscriber, MessageType message_type);
+    void unsubscribe(Subscriber *subscriber, MessageType message_type);
     void publish(MessageType message_type, const std::any &data) const;
 
   private:

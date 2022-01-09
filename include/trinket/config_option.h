@@ -15,6 +15,8 @@ enum class ConfigOption
     SCREEN_HEIGHT,
     GRAPHICS_API,
     PHYSICS_DEBUG_DRAW,
+    ZONE_LOADERS,
+    STARTING_ZONE,
 };
 
 }

@@ -17,11 +17,13 @@ namespace trinket
 class Subscriber
 {
   public:
-    virtual ~Subscriber() = default;
+    virtual ~Subscriber();
     virtual void handle_message(MessageType message_type, const std::any &data) = 0;
 
   protected:
     void subscribe(MessageType message_type);
+
+    std::set<MessageType> subscribed_;
 };
 
 }

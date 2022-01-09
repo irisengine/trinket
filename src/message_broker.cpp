@@ -35,6 +35,12 @@ void MessageBroker::subscribe(Subscriber *subscriber, MessageType message_type)
     subscriptions_[message_type].emplace_back(subscriber);
 }
 
+void MessageBroker::unsubscribe(Subscriber *subscriber, MessageType message_type)
+{
+    auto &subs = subscriptions_[message_type];
+    subs.erase(std::remove(std::begin(subs), std::end(subs), subscriber), std::end(subs));
+}
+
 void MessageBroker::publish(MessageType message_type, const std::any &data) const
 {
     if (const auto subs = subscriptions_.find(message_type); subs != std::cend(subscriptions_))

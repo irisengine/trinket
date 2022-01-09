@@ -10,6 +10,7 @@
 #include <string>
 #include <unordered_map>
 #include <variant>
+#include <vector>
 
 #include "config.h"
 #include "config_option.h"
@@ -26,9 +27,10 @@ class YamlConfig : public Config
     std::string string_option(ConfigOption option) override;
     std::uint32_t uint32_option(ConfigOption option) override;
     bool bool_option(ConfigOption option) override;
+    std::vector<std::string> string_array_option(ConfigOption option) override;
 
   private:
-    using ConfigTypes = std::variant<std::string, std::uint32_t, bool>;
+    using ConfigTypes = std::variant<std::string, std::uint32_t, bool, std::vector<std::string>>;
     std::unordered_map<ConfigOption, ConfigTypes> options_;
 };
 

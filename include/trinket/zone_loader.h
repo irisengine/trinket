@@ -7,9 +7,11 @@
 #pragma once
 
 #include <memory>
+#include <tuple>
 #include <vector>
 
 #include "iris/core/quaternion.h"
+#include "iris/core/transform.h"
 #include "iris/core/vector3.h"
 #include "iris/graphics/mesh.h"
 #include "iris/graphics/render_graph/render_graph.h"
@@ -32,8 +34,10 @@ class ZoneLoader
 {
   public:
     virtual ~ZoneLoader() = default;
+    virtual std::string name() = 0;
     virtual iris::Vector3 player_start_position() = 0;
     virtual std::vector<StaticGeometry> static_geometry() = 0;
+    virtual std::tuple<iris::Transform, std::string> portal() = 0;
 };
 
 }

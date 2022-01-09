@@ -1,0 +1,181 @@
+---
+player_start_position: [0.0, 0.0, 0.0]
+name: "dungeon"
+static_geometry:
+  - position: [0.0, -1002.0, 0.0]
+    orientation: [0.0, 0.0, 0.0]
+    scale: [1000.0, 1000.0, 1000.0]
+    mesh_type: "cube"
+    texture: "grass.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [0.0, -2.4, 0.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [-10.0, -2.4, 10.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [0.0, -2.4, 10.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [10.0, -2.4, 10.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [-10.0, -2.4, 0.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [10.0, -2.4, 0.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [-10.0, -2.4, -10.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [0.0, -2.4, -10.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [10.0, -2.4, -10.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Floor_Modular.fbx"
+    texture: "Floor_Modular_Texture.png"
+    rigid_body: false
+  - position: [10.0, -2.4, -15.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [0.0, -2.4, -15.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [-10.0, -2.4, -15.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [10.0, -2.4, 15.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [0.0, -2.4, 15.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [-10.0, -2.4, 15.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [15.0, -2.4, -10.0]
+    orientation: [0.0, 1.570796327, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [15.0, -2.4, 0.0]
+    orientation: [0.0, 1.570796327, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [15.0, -2.4, 10.0]
+    orientation: [0.0, 1.570796327, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [-15.0, -2.4, -10.0]
+    orientation: [0.0, 1.570796327, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [-15.0, -2.4, 0.0]
+    orientation: [0.0, 1.570796327, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [-15.0, -2.4, 10.0]
+    orientation: [0.0, 1.570796327, -1.570796327]
+    scale: [5.0, 5.0, 5.0]
+    mesh_type: "Wall_Modular.fbx"
+    texture: "Wall_Modular_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [-13.0, -2.4, -13.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [2.0, 2.0, 2.0]
+    mesh_type: "Column.fbx"
+    texture: "Column_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [13.0, -2.4, -13.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [2.0, 2.0, 2.0]
+    mesh_type: "Column.fbx"
+    texture: "Column_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [-13.0, -2.4, 13.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [2.0, 2.0, 2.0]
+    mesh_type: "Column.fbx"
+    texture: "Column_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+  - position: [13.0, -2.4, 13.0]
+    orientation: [0.0, 0.0, -1.570796327]
+    scale: [2.0, 2.0, 2.0]
+    mesh_type: "Column.fbx"
+    texture: "Column_Texture.png"
+    rigid_body: true
+    rigid_body_type: bounding_box
+portal:
+  - destination: "town"
+    position: [-10.0, 0.0, 0.0]
+    scale: [0.5, 1.7, 0.5]
