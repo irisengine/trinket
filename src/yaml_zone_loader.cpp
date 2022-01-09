@@ -6,6 +6,7 @@
 
 #include "yaml_zone_loader.h"
 
+#include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
@@ -17,6 +18,7 @@
 #include "iris/graphics/mesh_manager.h"
 #include "iris/graphics/render_graph/render_graph.h"
 #include "iris/graphics/render_graph/texture_node.h"
+#include "iris/graphics/vertex_data.h"
 #include "iris/log/log.h"
 #include "iris/physics/collision_shape.h"
 #include "iris/physics/physics_manager.h"
@@ -34,6 +36,31 @@ iris::Vector3 get_vector3(const YAML::Node &node)
 iris::Quaternion get_quaternion(const YAML::Node &node)
 {
     return {node[0].as<float>(), node[1].as<float>(), node[2].as<float>()};
+}
+
+iris::Vector3 bounding_box(const iris::Mesh *mesh, const iris::Vector3 &scale)
+{
+    const auto min_max_x = std::minmax_element(
+        std::cbegin(mesh->vertices()),
+        std::cend(mesh->vertices()),
+        [](const iris::VertexData &a, const iris::VertexData &b) { return a.position.x < b.position.x; });
+
+    const auto min_max_y = std::minmax_element(
+        std::cbegin(mesh->vertices()),
+        std::cend(mesh->vertices()),
+        [](const iris::VertexData &a, const iris::VertexData &b) { return a.position.y < b.position.y; });
+
+    const auto min_max_z = std::minmax_element(
+        std::cbegin(mesh->vertices()),
+        std::cend(mesh->vertices()),
+        [](const iris::VertexData &a, const iris::VertexData &b) { return a.position.z < b.position.z; });
+
+    const iris::Vector3 min_point{
+        min_max_x.first->position.x, min_max_y.first->position.y, min_max_z.first->position.z};
+    const iris::Vector3 max_point{
+        min_max_x.second->position.x, min_max_y.second->position.y, min_max_z.second->position.z};
+
+    return (max_point - min_point) * 0.5f * scale;
 }
 
 }
@@ -73,8 +100,13 @@ std::vector<StaticGeometry> YamlZoneLoader::static_geometry()
         auto *texture_node = render_graph->create<iris::TextureNode>(texture_name);
         render_graph->render_node()->set_colour_input(texture_node);
 
-        auto *collision_shape =
-            geometry["rigid_body"].as<bool>() ? ps->create_mesh_collision_shape(mesh, scale) : nullptr;
+        iris::CollisionShape *collision_shape = nullptr;
+        if (geometry["rigid_body"].as<bool>())
+        {
+            collision_shape = geometry["rigid_body_type"].as<std::string>() == "bounding_box"
+                                  ? ps->create_box_collision_shape(bounding_box(mesh, scale))
+                                  : ps->create_mesh_collision_shape(mesh, scale);
+        }
 
         static_geometry.push_back(
             {.position = get_vector3(geometry["position"]),

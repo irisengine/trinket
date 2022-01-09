@@ -7,27 +7,32 @@ static_geometry:
     mesh_type: "cube"
     texture: "grass.png"
     rigid_body: true
+    rigid_body_type: bounding_box
   - position: [0.0, -2.2, 40.0]
     orientation: [0.0, 0.0, -1.570796327]
     scale: [7.0, 7.0, 7.0]
     mesh_type: "Inn.fbx"
     texture: "Inn_Texture.png"
     rigid_body: true
+    rigid_body_type: mesh
   - position: [0.0, -2.2, -40.0]
     orientation: [0.0, 0.0, -1.570796327]
     scale: [7.0, 7.0, 7.0]
     mesh_type: "Bell_Tower.fbx"
     texture: "Bell_Tower_Texture.png"
     rigid_body: true
+    rigid_body_type: mesh
   - position: [40.0, -2.2, 0.0]
     orientation: [0.0, -1.570796327, -1.570796327]
     scale: [7.0, 7.0, 7.0]
     mesh_type: "Blacksmith.fbx"
     texture: "Blacksmith_Texture.png"
     rigid_body: true
+    rigid_body_type: mesh
   - position: [-40.0, -2.2, 0.0]
     orientation: [0.0, 1.570796327, -1.570796327]
     scale: [7.0, 7.0, 7.0]
     mesh_type: "Sawmill.fbx"
     texture: "Sawmill_Texture.png"
     rigid_body: true
+    rigid_body_type: mesh
