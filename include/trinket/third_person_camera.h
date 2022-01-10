@@ -12,6 +12,7 @@
 
 #include "iris/core/camera.h"
 #include "iris/events/event.h"
+#include "iris/physics/physics_system.h"
 
 #include "game_object.h"
 #include "message_type.h"
@@ -24,7 +25,7 @@ namespace trinket
 class ThirdPersonCamera : public GameObject, Subscriber
 {
   public:
-    ThirdPersonCamera(Player *player, std::uint32_t width, std::uint32_t height);
+    ThirdPersonCamera(Player *player, std::uint32_t width, std::uint32_t height, iris::PhysicsSystem *ps);
     ~ThirdPersonCamera() override = default;
     void update() override;
     iris::Camera *camera();
@@ -38,6 +39,7 @@ class ThirdPersonCamera : public GameObject, Subscriber
     std::map<iris::Key, iris::KeyState> key_map_;
     float azimuth_;
     float altitude_;
+    iris::PhysicsSystem *ps_;
 };
 
 }

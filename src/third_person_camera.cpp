@@ -10,10 +10,12 @@
 #include <cstdint>
 
 #include "iris/core/camera_type.h"
+#include "iris/core/error_handling.h"
 #include "iris/core/vector3.h"
 #include "iris/events/event.h"
 #include "iris/events/keyboard_event.h"
 #include "iris/log/log.h"
+#include "iris/physics/physics_system.h"
 
 #include "maths.h"
 #include "player.h"
@@ -21,12 +23,13 @@
 namespace trinket
 {
 
-ThirdPersonCamera::ThirdPersonCamera(Player *player, std::uint32_t width, std::uint32_t height)
+ThirdPersonCamera::ThirdPersonCamera(Player *player, std::uint32_t width, std::uint32_t height, iris::PhysicsSystem *ps)
     : player_(player)
     , camera_(iris::CameraType::PERSPECTIVE, width, height, 10000u)
     , key_map_()
     , azimuth_(pi_2)
     , altitude_(pi_4 / 2.0f)
+    , ps_(ps)
 {
     subscribe(MessageType::MOUSE_MOVE);
     subscribe(MessageType::KEY_PRESS);
@@ -71,7 +74,36 @@ void ThirdPersonCamera::update()
 
     player_->set_walk_direction(walk_direction);
 
-    static constexpr auto distance = 20.0f;
+    static constexpr auto max_distance = 20.0f;
+
+    const auto hits = ps_->ray_cast(
+        player_->position(),
+        iris::Vector3::normalise(camera_.position() - player_->position()),
+        {player_->rigid_body()});
+
+    const auto static_mesh_intersection = std::find_if(
+        std::cbegin(hits),
+        std::cend(hits),
+        [](const auto &element) { return std::get<0>(element)->type() == iris::RigidBodyType::STATIC; });
+
+    LOG_DEBUG("tpc", "hits: {}", hits.size());
+    if (static_mesh_intersection != std::cend(hits))
+    {
+        LOG_DEBUG("tpc", "hit: {}", std::get<0>(*static_mesh_intersection)->name());
+    }
+
+    for (const auto &[_, p] : hits)
+    {
+        LOG_DEBUG("tpc", "\td: {}", iris::Vector3::distance(player_->position(), p));
+    }
+
+    const auto distance =
+        static_mesh_intersection == std::cend(hits)
+            ? max_distance
+            : std::min(
+                  max_distance,
+                  iris::Vector3::distance(player_->position(), std::get<1>(*static_mesh_intersection)) - 1.0f);
+    LOG_DEBUG("tpc", "d: {}", distance);
 
     // we store the camera position as polar coordinates, which means it moves around a unit sphere centered on
     // the player convert back to cartesian coords

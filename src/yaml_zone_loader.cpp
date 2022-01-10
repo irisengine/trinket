@@ -119,7 +119,8 @@ std::vector<StaticGeometry> YamlZoneLoader::static_geometry()
              .scale = scale,
              .mesh = mesh,
              .render_graph = std::move(render_graph),
-             .collision_shape = collision_shape});
+             .collision_shape = collision_shape,
+             .name = geometry["mesh_type"].as<std::string>()});
     }
 
     return static_geometry;

@@ -119,6 +119,7 @@ void Game::run_zone()
             auto *body =
                 ps->create_rigid_body(geometry.position, geometry.collision_shape, iris::RigidBodyType::STATIC);
             body->reposition(geometry.position, geometry.orientation);
+            body->set_name(geometry.name);
         }
     }
 
@@ -145,7 +146,7 @@ void Game::run_zone()
     objects.emplace_back(std::make_unique<Player>(scene, ps, current_zone_->player_start_position()));
     auto *player = static_cast<Player *>(objects.back().get());
 
-    objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window_->width(), window_->height()));
+    objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window_->width(), window_->height(), ps));
     auto *camera = static_cast<ThirdPersonCamera *>(objects.back().get());
 
     iris::RenderPass render_pass{&scene, camera->camera(), nullptr, sky_box};

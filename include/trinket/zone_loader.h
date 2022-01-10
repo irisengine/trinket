@@ -7,6 +7,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -28,6 +29,7 @@ struct StaticGeometry
     const iris::Mesh *mesh;
     std::unique_ptr<iris::RenderGraph> render_graph;
     iris::CollisionShape *collision_shape;
+    std::string name;
 };
 
 class ZoneLoader
