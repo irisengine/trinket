@@ -39,6 +39,7 @@ class ThirdPersonCamera : public GameObject, Subscriber
     std::map<iris::Key, iris::KeyState> key_map_;
     float azimuth_;
     float altitude_;
+    float camera_distance_;
     iris::PhysicsSystem *ps_;
 };
 

@@ -14,6 +14,7 @@
 #include "iris/core/root.h"
 #include "iris/core/transform.h"
 #include "iris/events/keyboard_event.h"
+#include "iris/events/mouse_button_event.h"
 #include "iris/graphics/bone.h"
 #include "iris/graphics/mesh_manager.h"
 #include "iris/graphics/render_graph/render_graph.h"
@@ -70,6 +71,7 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 
     character_controller_ = ps->create_character_controller();
     character_controller_->reposition(render_entity_->position(), {});
 
+    subscribe(MessageType::MOUSE_BUTTON_PRESS);
     subscribe(MessageType::KEY_PRESS);
 }
 
@@ -154,20 +156,29 @@ void Player::handle_message(MessageType message_type, const std::any &data)
 {
     switch (message_type)
     {
-        case MessageType::KEY_PRESS:
+        case MessageType::MOUSE_BUTTON_PRESS:
         {
-            const auto key = std::any_cast<iris::KeyboardEvent>(data);
+            const auto mouse_button = std::any_cast<iris::MouseButtonEvent>(data);
             if (!attacking_)
             {
                 // player can only attack if not attacking
-                if ((key.key == iris::Key::SPACE) && (key.state == iris::KeyState::DOWN))
+                if ((mouse_button.button == iris::MouseButton::LEFT) &&
+                    (mouse_button.state == iris::MouseButtonState::DOWN))
                 {
                     attacking_ = true;
                     attack_stop_ = std::chrono::system_clock::now() + attack_duration_;
                     current_animation_ = "CharacterArmature|Sword_Attack";
                     render_entity_->skeleton().set_animation(current_animation_);
                 }
+            }
 
+            break;
+        }
+        case MessageType::KEY_PRESS:
+        {
+            const auto key = std::any_cast<iris::KeyboardEvent>(data);
+            if (!attacking_)
+            {
                 if ((key.key == iris::Key::W) || (key.key == iris::Key::A) || (key.key == iris::Key::S) ||
                     (key.key == iris::Key::D))
                 {

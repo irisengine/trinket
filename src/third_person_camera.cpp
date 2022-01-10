@@ -14,6 +14,7 @@
 #include "iris/core/vector3.h"
 #include "iris/events/event.h"
 #include "iris/events/keyboard_event.h"
+#include "iris/events/scroll_wheel_event.h"
 #include "iris/log/log.h"
 #include "iris/physics/physics_system.h"
 
@@ -29,11 +30,9 @@ ThirdPersonCamera::ThirdPersonCamera(Player *player, std::uint32_t width, std::u
     , key_map_()
     , azimuth_(pi_2)
     , altitude_(pi_4 / 2.0f)
+    , camera_distance_(20.0f)
     , ps_(ps)
 {
-    subscribe(MessageType::MOUSE_MOVE);
-    subscribe(MessageType::KEY_PRESS);
-
     key_map_ = {
         {iris::Key::W, iris::KeyState::UP},
         {iris::Key::A, iris::KeyState::UP},
@@ -43,6 +42,10 @@ ThirdPersonCamera::ThirdPersonCamera(Player *player, std::uint32_t width, std::u
 
     camera_.set_position({0.0f, 0.0f, 800.0f});
     camera_.set_pitch(-altitude_);
+
+    subscribe(MessageType::MOUSE_MOVE);
+    subscribe(MessageType::KEY_PRESS);
+    subscribe(MessageType::SCROLL_WHEEL);
 }
 
 void ThirdPersonCamera::update()
@@ -74,8 +77,6 @@ void ThirdPersonCamera::update()
 
     player_->set_walk_direction(walk_direction);
 
-    static constexpr auto max_distance = 20.0f;
-
     const auto hits = ps_->ray_cast(
         player_->position(),
         iris::Vector3::normalise(camera_.position() - player_->position()),
@@ -86,24 +87,12 @@ void ThirdPersonCamera::update()
         std::cend(hits),
         [](const auto &element) { return std::get<0>(element)->type() == iris::RigidBodyType::STATIC; });
 
-    LOG_DEBUG("tpc", "hits: {}", hits.size());
-    if (static_mesh_intersection != std::cend(hits))
-    {
-        LOG_DEBUG("tpc", "hit: {}", std::get<0>(*static_mesh_intersection)->name());
-    }
-
-    for (const auto &[_, p] : hits)
-    {
-        LOG_DEBUG("tpc", "\td: {}", iris::Vector3::distance(player_->position(), p));
-    }
-
     const auto distance =
         static_mesh_intersection == std::cend(hits)
-            ? max_distance
+            ? camera_distance_
             : std::min(
-                  max_distance,
+                  camera_distance_,
                   iris::Vector3::distance(player_->position(), std::get<1>(*static_mesh_intersection)) - 1.0f);
-    LOG_DEBUG("tpc", "d: {}", distance);
 
     // we store the camera position as polar coordinates, which means it moves around a unit sphere centered on
     // the player convert back to cartesian coords
@@ -161,6 +150,15 @@ void ThirdPersonCamera::handle_message(MessageType message_type, const std::any 
             key_map_.insert_or_assign(key.key, key.state);
 
             break;
+        }
+        case MessageType::SCROLL_WHEEL:
+        {
+            const auto scroll = std::any_cast<iris::ScrollWheelEvent>(data);
+            camera_distance_ += scroll.delta_y * -1.5f;
+
+            static constexpr auto max_distance = 100.0f;
+            static constexpr auto min_distance = 5.0f;
+            camera_distance_ = std::clamp(camera_distance_, min_distance, max_distance);
         }
         default: break;
     }

@@ -7,6 +7,7 @@
 #include "input_handler.h"
 
 #include "iris/events/event.h"
+#include "iris/log/log.h"
 
 #include "message_type.h"
 #include "publisher.h"
@@ -35,6 +36,14 @@ void InputHandler::update()
         else if (event->is_key())
         {
             publish(MessageType::KEY_PRESS, {event->key()});
+        }
+        else if (event->is_mouse_button())
+        {
+            publish(MessageType::MOUSE_BUTTON_PRESS, {event->mouse_button()});
+        }
+        else if (event->is_scroll_wheel())
+        {
+            publish(MessageType::SCROLL_WHEEL, {event->scroll_wheel()});
         }
 
         event = window_->pump_event();
