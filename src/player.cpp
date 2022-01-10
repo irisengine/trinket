@@ -93,7 +93,7 @@ void Player::update()
         {
             if (contact.contact_b != character_controller_->rigid_body())
             {
-                publish(MessageType::WEAPON_COLLISION, {std::make_tuple(contact.contact_b, contact.world_position_b)});
+                publish(MessageType::WEAPON_COLLISION, {std::make_tuple(contact.contact_b, contact.position)});
             }
         }
     }

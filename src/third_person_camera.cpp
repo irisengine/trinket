@@ -17,6 +17,7 @@
 #include "iris/events/scroll_wheel_event.h"
 #include "iris/log/log.h"
 #include "iris/physics/physics_system.h"
+#include "iris/physics/ray_cast_result.h"
 
 #include "maths.h"
 #include "player.h"
@@ -85,14 +86,14 @@ void ThirdPersonCamera::update()
     const auto static_mesh_intersection = std::find_if(
         std::cbegin(hits),
         std::cend(hits),
-        [](const auto &element) { return std::get<0>(element)->type() == iris::RigidBodyType::STATIC; });
+        [](const auto &element) { return element.body->type() == iris::RigidBodyType::STATIC; });
 
     const auto distance =
         static_mesh_intersection == std::cend(hits)
             ? camera_distance_
             : std::min(
                   camera_distance_,
-                  iris::Vector3::distance(player_->position(), std::get<1>(*static_mesh_intersection)) - 1.0f);
+                  iris::Vector3::distance(player_->position(), static_mesh_intersection->position) - 1.0f);
 
     // we store the camera position as polar coordinates, which means it moves around a unit sphere centered on
     // the player convert back to cartesian coords
