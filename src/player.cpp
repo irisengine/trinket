@@ -43,7 +43,11 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 
     , attack_stop_()
     , attack_duration_(800ms)
     , ps_(ps)
-    , current_animation_("CharacterArmature|Idle_Weapon")
+    , blend_stop_()
+    , blend_time_(500ms)
+    , blending_(false)
+    , animation_controller_()
+    , move_key_pressed_(0u)
 {
     auto &mesh_manager = iris::Root::mesh_manager();
 
@@ -56,7 +60,41 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 
         mesh_manager.load_mesh("Warrior.fbx"),
         iris::Transform{start_position, {}, {0.01f}},
         mesh_manager.load_skeleton("Warrior.fbx"));
-    render_entity_->skeleton().set_animation(current_animation_);
+
+    auto animations = mesh_manager.load_animations("Warrior.fbx");
+    auto find = std::find_if(
+        std::begin(animations),
+        std::end(animations),
+        [](const iris::Animation &animation) { return animation.name() == "CharacterArmature|Sword_AttackFast"; });
+    find->set_playback_type(iris::PlaybackType::SINGLE);
+
+    animation_controller_ = std::make_unique<iris::AnimationController>(
+        animations,
+        std::vector<iris::AnimationLayer>{
+            {{{"CharacterArmature|Idle_Weapon", "CharacterArmature|Run", 500ms},
+              {"CharacterArmature|Idle_Weapon", "CharacterArmature|Idle_Weapon", 100ms},
+              {"CharacterArmature|Run", "CharacterArmature|Idle_Weapon", 500ms},
+              {"CharacterArmature|Run", "CharacterArmature|Run", 100ms}},
+             "CharacterArmature|Idle_Weapon"},
+            {{"Shoulder.R",
+              "UpperArm.R",
+              "ShoulderPad.R",
+              "LowerArm.R",
+              "Fist.R",
+              "Fist1.R",
+              "Fist2.R",
+              "Fist2.R_end",
+              "Weapon.R",
+              "Warrior_Sword",
+              "Weapon.R_end",
+              "Thumb1.R",
+              "Thumb2.R",
+              "Thumb2.R_end"},
+             {
+                 {"CharacterArmature|Sword_AttackFast", "CharacterArmature|Sword_AttackFast", 0ms},
+             },
+             "CharacterArmature|Sword_AttackFast"}},
+        render_entity_->skeleton());
 
     auto *render_graph2 = scene.create_render_graph();
     auto *texture2 = render_graph2->create<iris::TextureNode>("Sword_Texture.png");
@@ -77,15 +115,15 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 
 
 void Player::update()
 {
+    const auto now = std::chrono::system_clock::now();
+
     // handle attack logic if player is attacking
     if (attacking_)
     {
-        const auto now = std::chrono::system_clock::now();
         if (now >= attack_stop_)
         {
             // attack has completed so reset state
             attacking_ = false;
-            render_entity_->skeleton().set_animation("CharacterArmature|Idle_Weapon");
         }
 
         // get all contact points the sword is making (ignoring the player) and publish a message
@@ -99,7 +137,7 @@ void Player::update()
     }
 
     render_entity_->set_position(character_controller_->position());
-    render_entity_->skeleton().advance();
+    animation_controller_->update();
 
     // offset of player in world space
     static constexpr iris::Vector3 player_world_offset{0.0f, -1.2f, 0.0f};
@@ -167,8 +205,7 @@ void Player::handle_message(MessageType message_type, const std::any &data)
                 {
                     attacking_ = true;
                     attack_stop_ = std::chrono::system_clock::now() + attack_duration_;
-                    current_animation_ = "CharacterArmature|Sword_Attack";
-                    render_entity_->skeleton().set_animation(current_animation_);
+                    animation_controller_->play(1u, "CharacterArmature|Sword_AttackFast");
                 }
             }
 
@@ -177,17 +214,28 @@ void Player::handle_message(MessageType message_type, const std::any &data)
         case MessageType::KEY_PRESS:
         {
             const auto key = std::any_cast<iris::KeyboardEvent>(data);
-            if (!attacking_)
+
+            if ((key.key == iris::Key::W) || (key.key == iris::Key::A) || (key.key == iris::Key::S) ||
+                (key.key == iris::Key::D))
             {
-                if ((key.key == iris::Key::W) || (key.key == iris::Key::A) || (key.key == iris::Key::S) ||
-                    (key.key == iris::Key::D))
+                blend_stop_ = std::chrono::system_clock::now() + blend_time_;
+                blending_ = true;
+                if (key.state == iris::KeyState::DOWN)
                 {
-                    const auto next_animation =
-                        key.state == iris::KeyState::DOWN ? "CharacterArmature|Run" : "CharacterArmature|Idle_Weapon";
-                    if (next_animation != current_animation_)
+                    LOG_DEBUG("p", "i -> r");
+                    animation_controller_->play(0u, "CharacterArmature|Run");
+                    ++move_key_pressed_;
+                }
+                else
+                {
+                    if (move_key_pressed_ != 0u)
                     {
-                        current_animation_ = next_animation;
-                        render_entity_->skeleton().set_animation(current_animation_);
+                        --move_key_pressed_;
+                        if (move_key_pressed_ == 0u)
+                        {
+                            LOG_DEBUG("p", "r -> i");
+                            animation_controller_->play(0u, "CharacterArmature|Idle_Weapon");
+                        }
                     }
                 }
             }

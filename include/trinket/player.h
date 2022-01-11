@@ -9,10 +9,12 @@
 #include <any>
 #include <chrono>
 #include <map>
+#include <memory>
 #include <string>
 
 #include "iris/core/quaternion.h"
 #include "iris/core/vector3.h"
+#include "iris/graphics/animation/animation_controller.h"
 #include "iris/graphics/render_entity.h"
 #include "iris/graphics/scene.h"
 #include "iris/physics/character_controller.h"
@@ -51,7 +53,11 @@ class Player : public GameObject, Publisher, Subscriber
     std::chrono::system_clock::time_point attack_stop_;
     std::chrono::milliseconds attack_duration_;
     iris::PhysicsSystem *ps_;
-    std::string current_animation_;
+    std::chrono::system_clock::time_point blend_stop_;
+    std::chrono::milliseconds blend_time_;
+    bool blending_;
+    std::unique_ptr<iris::AnimationController> animation_controller_;
+    std::uint32_t move_key_pressed_;
 };
 
 }
