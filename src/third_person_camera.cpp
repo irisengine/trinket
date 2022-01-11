@@ -78,22 +78,44 @@ void ThirdPersonCamera::update()
 
     player_->set_walk_direction(walk_direction);
 
-    const auto hits = ps_->ray_cast(
+    auto distance = camera_distance_;
+
+    // cast a ray from player to camera to see if anything is in the way
+    auto hits = ps_->ray_cast(
         player_->position(),
         iris::Vector3::normalise(camera_.position() - player_->position()),
         {player_->rigid_body()});
 
-    const auto static_mesh_intersection = std::find_if(
-        std::cbegin(hits),
-        std::cend(hits),
-        [](const auto &element) { return element.body->type() == iris::RigidBodyType::STATIC; });
+    // only care about occlusion from static bodies
+    hits.erase(
+        std::remove_if(
+            std::begin(hits),
+            std::end(hits),
+            [](const iris::RayCastResult &result) { return result.body->type() != iris::RigidBodyType::STATIC; }),
+        std::end(hits));
 
-    const auto distance =
-        static_mesh_intersection == std::cend(hits)
-            ? camera_distance_
-            : std::min(
-                  camera_distance_,
-                  iris::Vector3::distance(player_->position(), static_mesh_intersection->position) - 1.0f);
+    if (!hits.empty())
+    {
+        // we only want to move the camera if it is "in" an object
+        // to do this we take the first object the ray hits and then find the last hit for that object
+        // if the camera is between the player and the last ht then we consider ourselves "in" the object and make
+        // adjustments
+        const auto *first_body = hits.front().body;
+        const auto last_hit = std::find_if(
+            std::crbegin(hits),
+            std::crend(hits),
+            [first_body](const iris::RayCastResult &result) { return result.body == first_body; });
+
+        const auto player_camera_distance = iris::Vector3::distance(camera_.position(), player_->position());
+        const auto player_first_hit_distance = iris::Vector3::distance(hits.front().position, player_->position());
+        const auto player_last_hit_distance = iris::Vector3::distance(last_hit->position, player_->position());
+
+        // check if the camera is between the player and the last hit
+        if (player_camera_distance < player_last_hit_distance)
+        {
+            distance = std::min(camera_distance_, player_first_hit_distance);
+        }
+    }
 
     // we store the camera position as polar coordinates, which means it moves around a unit sphere centered on
     // the player convert back to cartesian coords
