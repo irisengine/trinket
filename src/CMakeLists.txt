@@ -33,3 +33,9 @@ target_include_directories(trinket PRIVATE ${INCLUDE_ROOT})
 find_package(iris REQUIRED PATHS ${PROJECT_SOURCE_DIR}/third_party/iris/lib/cmake/iris NO_DEFAULT_PATH)
 
 target_link_libraries(trinket iris::iris yaml-cpp)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  set_target_properties(trinket PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
+  set_target_properties(yaml-cpp PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreadedDebug")
+endif()
+
