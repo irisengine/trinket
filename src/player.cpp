@@ -222,7 +222,6 @@ void Player::handle_message(MessageType message_type, const std::any &data)
                 blending_ = true;
                 if (key.state == iris::KeyState::DOWN)
                 {
-                    LOG_DEBUG("p", "i -> r");
                     animation_controller_->play(0u, "CharacterArmature|Run");
                     ++move_key_pressed_;
                 }
@@ -233,7 +232,6 @@ void Player::handle_message(MessageType message_type, const std::any &data)
                         --move_key_pressed_;
                         if (move_key_pressed_ == 0u)
                         {
-                            LOG_DEBUG("p", "r -> i");
                             animation_controller_->play(0u, "CharacterArmature|Idle_Weapon");
                         }
                     }
