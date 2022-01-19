@@ -7,15 +7,18 @@
 #include "enemy.h"
 
 #include <any>
+#include <memory>
+#include <string>
 
-#include "iris/core/root.h"
+#include "iris/core/resource_loader.h"
 #include "iris/core/vector3.h"
-#include "iris/graphics/mesh_manager.h"
+#include "iris/graphics/animation/animation_layer.h"
 #include "iris/graphics/render_entity.h"
 #include "iris/graphics/scene.h"
 #include "iris/log/log.h"
 #include "iris/physics/physics_system.h"
 #include "iris/physics/rigid_body.h"
+#include "iris/scripting/lua/lua_script.h"
 
 #include "message_type.h"
 
@@ -24,56 +27,43 @@ using namespace std::literals::chrono_literals;
 namespace trinket
 {
 
-Enemy::Enemy(const iris::Vector3 &position, iris::Scene &scene, iris::PhysicsSystem *ps)
-    : render_entity_(nullptr)
-    , rigid_body_(nullptr)
-    , hit_cooldown_()
+struct EnemyInterop
 {
-    auto &mesh_manager = iris::Root::mesh_manager();
+    iris::CharacterController *character_controller;
+};
 
-    render_entity_ =
-        scene.create_entity(nullptr, mesh_manager.cube({1.0f, 0.0f, 0.0f}), iris::Transform{position, {}, {2.0f}});
-    rigid_body_ = ps->create_rigid_body(
-        render_entity_->position(), ps->create_box_collision_shape({2.0f}), iris::RigidBodyType::NORMAL);
+Enemy::Enemy(
+    iris::PhysicsSystem *ps,
+    const std::string &script_file,
+    iris::RenderEntity *render_entity,
+    const std::vector<iris::Animation> &animations)
+    : script_(std::make_unique<iris::LuaScript>(script_file, iris::LuaScript::LoadFile{}))
+    , render_entity_(render_entity)
+    , animation_controller_(nullptr)
+    , character_controller_(nullptr)
+{
+    script_.execute("init");
 
-    subscribe(MessageType::WEAPON_COLLISION);
+    animation_controller_ = std::make_unique<iris::AnimationController>(
+        animations,
+        std::vector<iris::AnimationLayer>{{{{"Dance", "Dance", 0ms}}, "Dance"}},
+        render_entity_->skeleton());
+
+    character_controller_ = ps->create_character_controller();
+    character_controller_->reposition(render_entity_->position(), {});
 }
 
 void Enemy::update()
 {
-    render_entity_->set_position(rigid_body_->position());
-    render_entity_->set_orientation(rigid_body_->orientation());
+    script_.execute("update");
+
+    character_controller_->set_walk_direction({-1.0f, 0.0f, 0.0f});
+    render_entity_->set_position(character_controller_->position());
+    animation_controller_->update();
 }
 
 void Enemy::handle_message(MessageType message_type, const std::any &data)
 {
-    switch (message_type)
-    {
-        case MessageType::WEAPON_COLLISION:
-        {
-            const auto &[body, pos] = std::any_cast<std::tuple<iris::RigidBody *, iris::Vector3>>(data);
-
-            // if sword collided with us
-            if (body == rigid_body_)
-            {
-                // limit how often we can be attacked, this gives a short invulnerability window after each attack
-                const auto now = std::chrono::system_clock::now();
-                if (now >= hit_cooldown_)
-                {
-                    // apply a small impulse on hit to move us
-                    auto impulse = (rigid_body_->position() - pos).normalise() * iris::Vector3{50.0f};
-                    impulse.y = 0.0f;
-                    rigid_body_->apply_impulse(impulse);
-
-                    hit_cooldown_ = now + 500ms;
-                }
-
-                LOG_DEBUG("enemy", "i've been hit!");
-            }
-            break;
-        }
-        default: break;
-    }
 }
 
 }

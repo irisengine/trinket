@@ -18,6 +18,7 @@
 #include "iris/graphics/mesh_manager.h"
 #include "iris/graphics/render_graph/render_graph.h"
 #include "iris/graphics/render_graph/texture_node.h"
+#include "iris/graphics/skeleton.h"
 #include "iris/graphics/vertex_data.h"
 #include "iris/log/log.h"
 #include "iris/physics/collision_shape.h"
@@ -124,6 +125,34 @@ std::vector<StaticGeometry> YamlZoneLoader::static_geometry()
     }
 
     return static_geometry;
+}
+
+std::vector<EnemyInfo> YamlZoneLoader::enemies()
+{
+    std::vector<EnemyInfo> enemies{};
+
+    for (const auto &enemy : yaml_file_["enemies"])
+    {
+        const auto mesh_name = enemy["mesh"].as<std::string>();
+        const auto *mesh = iris::Root::mesh_manager().load_mesh(mesh_name);
+        const auto texture_name = enemy["texture"].as<std::string>();
+
+        auto render_graph = std::make_unique<iris::RenderGraph>();
+        auto *texture_node = render_graph->create<iris::TextureNode>(texture_name);
+        render_graph->render_node()->set_colour_input(texture_node);
+
+        enemies.push_back(
+            {.script_file = enemy["script"].as<std::string>(),
+             .mesh = mesh,
+             .render_graph = std::move(render_graph),
+             .skeleton = iris::Root::mesh_manager().load_skeleton(mesh_name),
+             .animations = iris::Root::mesh_manager().load_animations(mesh_name),
+             .position = get_vector3(enemy["position"]),
+             .orientation = get_quaternion(enemy["orientation"]),
+             .scale = get_vector3(enemy["scale"])});
+    }
+
+    return enemies;
 }
 
 std::tuple<iris::Transform, std::string> YamlZoneLoader::portal()

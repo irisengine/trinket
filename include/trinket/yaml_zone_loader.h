@@ -29,6 +29,7 @@ class YamlZoneLoader : public ZoneLoader
     std::string name() override;
     iris::Vector3 player_start_position() override;
     std::vector<StaticGeometry> static_geometry() override;
+    std::vector<EnemyInfo> enemies() override;
     std::tuple<iris::Transform, std::string> portal() override;
 
   private:

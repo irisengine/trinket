@@ -66,10 +66,10 @@ Game::Game(std::unique_ptr<Config> config, std::vector<std::unique_ptr<ZoneLoade
 {
     const auto starting_zone_name = config_->string_option(ConfigOption::STARTING_ZONE);
 
-    auto starting_zone =
-        std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [&starting_zone_name](auto &element) {
-            return element->name() == starting_zone_name;
-        });
+    auto starting_zone = std::find_if(
+        std::begin(zone_loaders_),
+        std::end(zone_loaders_),
+        [&starting_zone_name](auto &element) { return element->name() == starting_zone_name; });
 
     iris::ensure(starting_zone != std::end(zone_loaders_), "missing starting zone");
 
@@ -138,13 +138,21 @@ void Game::run_zone()
 
     std::vector<std::unique_ptr<GameObject>> objects{};
     objects.emplace_back(std::make_unique<InputHandler>(window_));
-    objects.emplace_back(std::make_unique<Enemy>(iris::Vector3{10.0f, 0.0f, 0.0f}, scene, ps));
-
     objects.emplace_back(std::make_unique<Player>(scene, ps, current_zone_->player_start_position()));
     auto *player = static_cast<Player *>(objects.back().get());
 
     objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window_->width(), window_->height(), ps));
     auto *camera = static_cast<ThirdPersonCamera *>(objects.back().get());
+
+    for (auto &enemy : current_zone_->enemies())
+    {
+        auto *entity = scene.create_entity(
+            scene.add(std::move(enemy.render_graph)),
+            enemy.mesh,
+            iris::Transform(enemy.position, enemy.orientation, enemy.scale),
+            enemy.skeleton);
+        objects.emplace_back(std::make_unique<Enemy>(ps, enemy.script_file, entity, enemy.animations));
+    }
 
     const auto sky_box = iris::Root::texture_manager().create(
         iris::Colour{0.275f, 0.51f, 0.796f}, iris::Colour{0.5f, 0.5f, 0.5f}, 2048u, 2048u);
@@ -155,17 +163,18 @@ void Game::run_zone()
     iris::Looper looper{
         0ms,
         16ms,
-        [ps, player, this](auto, std::chrono::microseconds delta) {
+        [ps, player, this](auto, std::chrono::microseconds delta)
+        {
             ps->step(std::chrono::duration_cast<std::chrono::milliseconds>(delta));
 
             for (const auto &contact : ps->contacts(portal_))
             {
                 if (contact.contact_b == player->rigid_body())
                 {
-                    auto destination =
-                        std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [this](auto &element) {
-                            return element->name() == portal_destination_;
-                        });
+                    auto destination = std::find_if(
+                        std::begin(zone_loaders_),
+                        std::end(zone_loaders_),
+                        [this](auto &element) { return element->name() == portal_destination_; });
 
                     iris::ensure(destination != std::cend(zone_loaders_), "missing zone");
 
@@ -175,7 +184,8 @@ void Game::run_zone()
 
             return true;
         },
-        [&](auto, auto) {
+        [&](auto, auto)
+        {
             for (auto &object : objects)
             {
                 object->update();

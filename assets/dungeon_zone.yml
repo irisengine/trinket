@@ -175,6 +175,13 @@ static_geometry:
     texture: "Column_Texture.png"
     rigid_body: true
     rigid_body_type: bounding_box
+enemies:
+  - script: "basic_enemy.lua"
+    mesh: "Mushroom.fbx"
+    texture: "Mushroom_Texture.png"
+    position: [10.0, -1.5, 0.0]
+    orientation: [0.0, 0.0, 0.0]
+    scale: [0.01, 0.01, 0.01]
 portal:
   - destination: "town"
     position: [-10.0, 0.0, 0.0]
