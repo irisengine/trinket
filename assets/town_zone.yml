@@ -1,5 +1,5 @@
 ---
-player_start_position: [0.0, 0.0, 0.0]
+player_start_position: [0.0, 0.0, 10.0]
 name: "town"
 static_geometry:
   - position: [0.0, -1002.0, 0.0]
@@ -16,7 +16,7 @@ static_geometry:
     texture: "Inn_Texture.png"
     rigid_body: true
     rigid_body_type: mesh
-  - position: [0.0, -2.2, -40.0]
+  - position: [0.0, -2.2, 0.0]
     orientation: [0.0, 0.0, -1.570796327]
     scale: [7.0, 7.0, 7.0]
     mesh_type: "Bell_Tower.fbx"
@@ -37,6 +37,27 @@ static_geometry:
     texture: "Sawmill_Texture.png"
     rigid_body: true
     rigid_body_type: mesh
+  - position: [-60.0, -2.2, 0.0]
+    orientation: [0.0, 0.39269908169, -1.570796327]
+    scale: [7.0, 7.0, 7.0]
+    mesh_type: "PointyTower.fbx"
+    texture: "PointyTower_Texture.png"
+    rigid_body: true
+    rigid_body_type: "cube"
+  - position: [-60.0, -2.2, 10.0]
+    orientation: [0.0, -1.570796327, -1.570796327]
+    scale: [7.0, 7.0, 7.0]
+    mesh_type: "TallWall.fbx"
+    texture: "TallWall_Texture.png"
+    rigid_body: true
+    rigid_body_type: "cube"
+  - position: [-60.0, -2.2, 20.65]
+    orientation: [0.0, -1.570796327, -1.570796327]
+    scale: [7.0, 7.0, 7.0]
+    mesh_type: "TallWall.fbx"
+    texture: "TallWall_Texture.png"
+    rigid_body: true
+    rigid_body_type: "cube"
 portal:
   - destination: "dungeon"
     position: [-10.0, 0.0, 0.0]
