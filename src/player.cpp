@@ -113,7 +113,7 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 
     subscribe(MessageType::KEY_PRESS);
 }
 
-void Player::update()
+void Player::update(std::chrono::microseconds)
 {
     const auto now = std::chrono::system_clock::now();
 

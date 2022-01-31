@@ -49,7 +49,7 @@ ThirdPersonCamera::ThirdPersonCamera(Player *player, std::uint32_t width, std::u
     subscribe(MessageType::SCROLL_WHEEL);
 }
 
-void ThirdPersonCamera::update()
+void ThirdPersonCamera::update(std::chrono::microseconds)
 {
     iris::Vector3 walk_direction{};
 

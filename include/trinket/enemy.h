@@ -39,7 +39,7 @@ class Enemy : public GameObject, Subscriber
         const std::vector<iris::Animation> &animations);
     ~Enemy() override = default;
 
-    void update() override;
+    void update(std::chrono::microseconds elapsed) override;
 
     void handle_message(MessageType message_type, const std::any &data) override;
 

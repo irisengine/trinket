@@ -53,7 +53,7 @@ Enemy::Enemy(
     character_controller_->reposition(render_entity_->position(), {});
 }
 
-void Enemy::update()
+void Enemy::update(std::chrono::microseconds elapsed)
 {
     script_.execute("update");
 

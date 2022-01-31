@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <chrono>
+
 #include "iris/graphics/window.h"
 
 #include "game_object.h"
@@ -18,7 +20,7 @@ class InputHandler : public GameObject, Publisher
 {
   public:
     InputHandler(iris::Window *window);
-    void update() override;
+    void update(std::chrono::microseconds) override;
 
   private:
     iris::Window *window_;

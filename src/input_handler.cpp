@@ -6,6 +6,8 @@
 
 #include "input_handler.h"
 
+#include <chrono>
+
 #include "iris/events/event.h"
 #include "iris/log/log.h"
 
@@ -20,7 +22,7 @@ InputHandler::InputHandler(iris::Window *window)
 {
 }
 
-void InputHandler::update()
+void InputHandler::update(std::chrono::microseconds)
 {
     auto event = window_->pump_event();
     while (event)

@@ -7,6 +7,7 @@
 #pragma once
 
 #include <any>
+#include <chrono>
 #include <cstdint>
 #include <map>
 
@@ -27,7 +28,7 @@ class ThirdPersonCamera : public GameObject, Subscriber
   public:
     ThirdPersonCamera(Player *player, std::uint32_t width, std::uint32_t height, iris::PhysicsSystem *ps);
     ~ThirdPersonCamera() override = default;
-    void update() override;
+    void update(std::chrono::microseconds) override;
     iris::Camera *camera();
 
   protected:

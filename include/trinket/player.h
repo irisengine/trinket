@@ -35,7 +35,7 @@ class Player : public GameObject, Publisher, Subscriber
     Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 &start_position);
     ~Player() override = default;
 
-    void update() override;
+    void update(std::chrono::microseconds) override;
 
     void set_orientation(const iris::Quaternion &orientation);
     void set_walk_direction(const iris::Vector3 &direction);
