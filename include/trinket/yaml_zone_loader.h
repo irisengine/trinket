@@ -10,12 +10,15 @@
 #include <string>
 #include <vector>
 
-#include "iris/core/quaternion.h"
 #include "iris/core/vector3.h"
-#include "iris/graphics/render_graph/render_graph.h"
-#include "iris/physics/collision_shape.h"
+#include "iris/graphics/scene.h"
+#include "iris/physics/physics_system.h"
+
 #include "yaml-cpp/yaml.h"
 
+#include "game_object.h"
+#include "player.h"
+#include "third_person_camera.h"
 #include "zone_loader.h"
 
 namespace trinket
@@ -28,7 +31,13 @@ class YamlZoneLoader : public ZoneLoader
     ~YamlZoneLoader() override = default;
     std::string name() override;
     iris::Vector3 player_start_position() override;
-    std::vector<StaticGeometry> static_geometry() override;
+    void load_static_geometry(iris::PhysicsSystem *ps, iris::Scene &scene) override;
+    void load_enemies(
+        iris::PhysicsSystem *ps,
+        iris::Scene &scene,
+        std::vector<std::unique_ptr<GameObject>> &game_objects,
+        Player *player,
+        ThirdPersonCamera *camera) override;
     std::tuple<iris::Transform, std::string> portal() override;
 
   private:

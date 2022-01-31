@@ -1,6 +1,7 @@
 set(INCLUDE_ROOT "${PROJECT_SOURCE_DIR}/include/trinket")
 
 add_executable(trinket
+    ${INCLUDE_ROOT}/character_controller.h
     ${INCLUDE_ROOT}/config.h
     ${INCLUDE_ROOT}/config_option.h
     ${INCLUDE_ROOT}/enemy.h
@@ -16,6 +17,7 @@ add_executable(trinket
     ${INCLUDE_ROOT}/yaml_config.h
     ${INCLUDE_ROOT}/yaml_zone_loader.h
     ${INCLUDE_ROOT}/zone_loader.h
+    character_controller.cpp
     enemy.cpp
     game.cpp
     input_handler.cpp

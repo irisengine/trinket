@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <chrono>
+
 namespace trinket
 {
 
@@ -13,7 +15,7 @@ class GameObject
 {
   public:
     virtual ~GameObject() = default;
-    virtual void update() = 0;
+    virtual void update(std::chrono::microseconds elapsed) = 0;
 };
 
 }

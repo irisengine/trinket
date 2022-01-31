@@ -31,7 +31,6 @@
 #include "iris/graphics/texture_manager.h"
 #include "iris/graphics/window.h"
 #include "iris/graphics/window_manager.h"
-#include "iris/physics/basic_character_controller.h"
 #include "iris/physics/physics_manager.h"
 #include "iris/physics/physics_system.h"
 #include "iris/physics/rigid_body.h"
@@ -66,10 +65,10 @@ Game::Game(std::unique_ptr<Config> config, std::vector<std::unique_ptr<ZoneLoade
 {
     const auto starting_zone_name = config_->string_option(ConfigOption::STARTING_ZONE);
 
-    auto starting_zone =
-        std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [&starting_zone_name](auto &element) {
-            return element->name() == starting_zone_name;
-        });
+    auto starting_zone = std::find_if(
+        std::begin(zone_loaders_),
+        std::end(zone_loaders_),
+        [&starting_zone_name](auto &element) { return element->name() == starting_zone_name; });
 
     iris::ensure(starting_zone != std::end(zone_loaders_), "missing starting zone");
 
@@ -95,30 +94,25 @@ void Game::run()
 
 void Game::run_zone()
 {
+    auto *ps = iris::Root::physics_manager().create_physics_system();
     auto &mesh_manager = iris::Root::mesh_manager();
 
     // basic scene setup
     iris::Scene scene{};
 
+    std::vector<std::unique_ptr<GameObject>> objects{};
+    objects.emplace_back(std::make_unique<InputHandler>(window_));
+    objects.emplace_back(std::make_unique<Player>(scene, ps, current_zone_->player_start_position()));
+    auto *player = static_cast<Player *>(objects.back().get());
+
+    objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window_->width(), window_->height(), ps));
+    auto *camera = static_cast<ThirdPersonCamera *>(objects.back().get());
+
+    current_zone_->load_static_geometry(ps, scene);
+    current_zone_->load_enemies(ps, scene, objects, player, camera);
+
     scene.set_ambient_light({0.2f, 0.2f, 0.2f, 1.0f});
-    scene.create_light<iris::PointLight>(iris::Vector3{10.0f}, iris::Colour{100.0f, 100.0f, 100.0f});
-
-    auto *ps = iris::Root::physics_manager().create_physics_system();
-
-    for (auto &geometry : current_zone_->static_geometry())
-    {
-        scene.create_entity(
-            scene.add(std::move(geometry.render_graph)),
-            geometry.mesh,
-            iris::Transform{geometry.position, geometry.orientation, geometry.scale});
-        if (geometry.collision_shape != nullptr)
-        {
-            auto *body =
-                ps->create_rigid_body(geometry.position, geometry.collision_shape, iris::RigidBodyType::STATIC);
-            body->reposition(geometry.position, geometry.orientation);
-            body->set_name(geometry.name);
-        }
-    }
+    auto *light = scene.create_light<iris::PointLight>(iris::Vector3{10.0f}, iris::Colour{100.0f, 100.0f, 100.0f});
 
     const auto [portal_transform, destination] = current_zone_->portal();
     scene.create_entity(nullptr, mesh_manager.cube({}), portal_transform);
@@ -136,16 +130,6 @@ void Game::run_zone()
         ps->enable_debug_draw(debug_draw);
     }
 
-    std::vector<std::unique_ptr<GameObject>> objects{};
-    objects.emplace_back(std::make_unique<InputHandler>(window_));
-    objects.emplace_back(std::make_unique<Enemy>(iris::Vector3{10.0f, 0.0f, 0.0f}, scene, ps));
-
-    objects.emplace_back(std::make_unique<Player>(scene, ps, current_zone_->player_start_position()));
-    auto *player = static_cast<Player *>(objects.back().get());
-
-    objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window_->width(), window_->height(), ps));
-    auto *camera = static_cast<ThirdPersonCamera *>(objects.back().get());
-
     const auto sky_box = iris::Root::texture_manager().create(
         iris::Colour{0.275f, 0.51f, 0.796f}, iris::Colour{0.5f, 0.5f, 0.5f}, 2048u, 2048u);
 
@@ -155,17 +139,18 @@ void Game::run_zone()
     iris::Looper looper{
         0ms,
         16ms,
-        [ps, player, this](auto, std::chrono::microseconds delta) {
+        [ps, player, this](auto, std::chrono::microseconds delta)
+        {
             ps->step(std::chrono::duration_cast<std::chrono::milliseconds>(delta));
 
             for (const auto &contact : ps->contacts(portal_))
             {
                 if (contact.contact_b == player->rigid_body())
                 {
-                    auto destination =
-                        std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [this](auto &element) {
-                            return element->name() == portal_destination_;
-                        });
+                    auto destination = std::find_if(
+                        std::begin(zone_loaders_),
+                        std::end(zone_loaders_),
+                        [this](auto &element) { return element->name() == portal_destination_; });
 
                     iris::ensure(destination != std::cend(zone_loaders_), "missing zone");
 
@@ -175,10 +160,13 @@ void Game::run_zone()
 
             return true;
         },
-        [&](auto, auto) {
+        [&](std::chrono::microseconds elapsed, auto)
+        {
+            light->set_position(player->position() + iris::Vector3{0.0f, 10.0f, 0.0f});
+
             for (auto &object : objects)
             {
-                object->update();
+                object->update(elapsed);
             }
 
             window_->render();

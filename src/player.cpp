@@ -26,6 +26,7 @@
 #include "iris/physics/rigid_body.h"
 #include "iris/physics/rigid_body_type.h"
 
+#include "character_controller.h"
 #include "maths.h"
 #include "message_type.h"
 
@@ -106,14 +107,15 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 
         ps->create_rigid_body({}, ps->create_box_collision_shape({0.1f, 0.1f, 1.0f}), iris::RigidBodyType::GHOST);
     sword_body_->set_name("sword");
 
-    character_controller_ = ps->create_character_controller();
+    character_controller_ = ps->create_character_controller<CharacterController>(ps, 12.0f, 0.5f, 1.7f, 2.0f);
     character_controller_->reposition(render_entity_->position(), {});
 
     subscribe(MessageType::MOUSE_BUTTON_PRESS);
     subscribe(MessageType::KEY_PRESS);
+    subscribe(MessageType::ENEMY_ATTACK);
 }
 
-void Player::update()
+void Player::update(std::chrono::microseconds)
 {
     const auto now = std::chrono::system_clock::now();
 
@@ -177,7 +179,7 @@ void Player::set_orientation(const iris::Quaternion &orientation)
 
 void Player::set_walk_direction(const iris::Vector3 &direction)
 {
-    character_controller_->set_walk_direction(direction);
+    character_controller_->set_movement_direction(direction);
 }
 
 iris::Vector3 Player::position() const
@@ -222,7 +224,6 @@ void Player::handle_message(MessageType message_type, const std::any &data)
                 blending_ = true;
                 if (key.state == iris::KeyState::DOWN)
                 {
-                    LOG_DEBUG("p", "i -> r");
                     animation_controller_->play(0u, "CharacterArmature|Run");
                     ++move_key_pressed_;
                 }
@@ -233,13 +234,17 @@ void Player::handle_message(MessageType message_type, const std::any &data)
                         --move_key_pressed_;
                         if (move_key_pressed_ == 0u)
                         {
-                            LOG_DEBUG("p", "r -> i");
                             animation_controller_->play(0u, "CharacterArmature|Idle_Weapon");
                         }
                     }
                 }
             }
 
+            break;
+        }
+        case MessageType::ENEMY_ATTACK:
+        {
+            LOG_DEBUG("player", "hit!");
             break;
         }
         default: break;

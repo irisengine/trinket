@@ -59,6 +59,7 @@ static_geometry:
     rigid_body: true
     rigid_body_type: "cube"
 portal:
-  - destination: "dungeon"
+    destination: dungeon
     position: [-10.0, 0.0, 0.0]
     scale: [0.5, 1.7, 0.5]
+enemies: []
