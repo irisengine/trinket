@@ -26,6 +26,7 @@
 #include "iris/physics/rigid_body.h"
 #include "iris/physics/rigid_body_type.h"
 
+#include "character_controller.h"
 #include "maths.h"
 #include "message_type.h"
 
@@ -106,7 +107,7 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 
         ps->create_rigid_body({}, ps->create_box_collision_shape({0.1f, 0.1f, 1.0f}), iris::RigidBodyType::GHOST);
     sword_body_->set_name("sword");
 
-    character_controller_ = ps->create_character_controller();
+    character_controller_ = ps->create_character_controller<CharacterController>(ps, 12.0f, 0.5f, 1.7f, 2.0f);
     character_controller_->reposition(render_entity_->position(), {});
 
     subscribe(MessageType::MOUSE_BUTTON_PRESS);
@@ -177,7 +178,7 @@ void Player::set_orientation(const iris::Quaternion &orientation)
 
 void Player::set_walk_direction(const iris::Vector3 &direction)
 {
-    character_controller_->set_walk_direction(direction);
+    character_controller_->set_movement_direction(direction);
 }
 
 iris::Vector3 Player::position() const
