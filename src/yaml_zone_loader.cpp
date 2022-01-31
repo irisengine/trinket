@@ -18,13 +18,20 @@
 #include "iris/graphics/mesh_manager.h"
 #include "iris/graphics/render_graph/render_graph.h"
 #include "iris/graphics/render_graph/texture_node.h"
+#include "iris/graphics/scene.h"
 #include "iris/graphics/skeleton.h"
 #include "iris/graphics/vertex_data.h"
 #include "iris/log/log.h"
 #include "iris/physics/collision_shape.h"
 #include "iris/physics/physics_manager.h"
 #include "iris/physics/physics_system.h"
+
 #include "yaml-cpp/yaml.h"
+
+#include "enemy.h"
+#include "game_object.h"
+#include "player.h"
+#include "third_person_camera.h"
 
 namespace
 {
@@ -88,15 +95,14 @@ iris::Vector3 YamlZoneLoader::player_start_position()
     return get_vector3(yaml_file_["player_start_position"]);
 }
 
-std::vector<StaticGeometry> YamlZoneLoader::static_geometry()
+void YamlZoneLoader::load_static_geometry(iris::PhysicsSystem *ps, iris::Scene &scene)
 {
-    std::vector<StaticGeometry> static_geometry{};
-
-    auto *ps = iris::Root::physics_manager().current_physics_system();
-
     for (const auto &geometry : yaml_file_["static_geometry"])
     {
+        const auto position = get_vector3(geometry["position"]);
+        const auto orientation = get_quaternion(geometry["orientation"]);
         const auto scale = get_vector3(geometry["scale"]);
+
         const auto mesh_type = geometry["mesh_type"].as<std::string>();
         const auto *mesh = (mesh_type == "cube") ? iris::Root::mesh_manager().cube({1.0f, 1.0f, 0.0f})
                                                  : iris::Root::mesh_manager().load_mesh(mesh_type);
@@ -106,58 +112,67 @@ std::vector<StaticGeometry> YamlZoneLoader::static_geometry()
         auto *texture_node = render_graph->create<iris::TextureNode>(texture_name);
         render_graph->render_node()->set_colour_input(texture_node);
 
-        iris::CollisionShape *collision_shape = nullptr;
+        scene.create_entity(scene.add(std::move(render_graph)), mesh, iris::Transform{position, orientation, scale});
+
         if (geometry["rigid_body"].as<bool>())
         {
-            collision_shape = geometry["rigid_body_type"].as<std::string>() == "bounding_box"
-                                  ? ps->create_box_collision_shape(bounding_box(mesh, scale))
-                                  : ps->create_mesh_collision_shape(mesh, scale);
+            const auto *collision_shape = geometry["rigid_body_type"].as<std::string>() == "bounding_box"
+                                              ? ps->create_box_collision_shape(bounding_box(mesh, scale))
+                                              : ps->create_mesh_collision_shape(mesh, scale);
+            auto *body = ps->create_rigid_body(position, collision_shape, iris::RigidBodyType::STATIC);
+            body->reposition(position, orientation);
+            body->set_name(mesh_type);
         }
-
-        static_geometry.push_back(
-            {.position = get_vector3(geometry["position"]),
-             .orientation = get_quaternion(geometry["orientation"]),
-             .scale = scale,
-             .mesh = mesh,
-             .render_graph = std::move(render_graph),
-             .collision_shape = collision_shape,
-             .name = geometry["mesh_type"].as<std::string>()});
     }
-
-    return static_geometry;
 }
 
-std::vector<EnemyInfo> YamlZoneLoader::enemies()
+void YamlZoneLoader::load_enemies(
+    iris::PhysicsSystem *ps,
+    iris::Scene &scene,
+    std::vector<std::unique_ptr<GameObject>> &game_objects,
+    Player *player,
+    ThirdPersonCamera *camera)
 {
-    std::vector<EnemyInfo> enemies{};
-
     for (const auto &enemy : yaml_file_["enemies"])
     {
+        const auto position = get_vector3(enemy["position"]);
+        const auto orientation = get_quaternion(enemy["orientation"]);
+        const auto scale = get_vector3(enemy["scale"]);
+
+        const auto bounds_min = get_vector3(enemy["bounds_min"]);
+        const auto bounds_max = get_vector3(enemy["bounds_max"]);
+
         const auto mesh_name = enemy["mesh"].as<std::string>();
         const auto *mesh = iris::Root::mesh_manager().load_mesh(mesh_name);
         const auto texture_name = enemy["texture"].as<std::string>();
+        const auto skeleton = iris::Root::mesh_manager().load_skeleton(mesh_name);
+        const auto animations = iris::Root::mesh_manager().load_animations(mesh_name);
 
         auto render_graph = std::make_unique<iris::RenderGraph>();
         auto *texture_node = render_graph->create<iris::TextureNode>(texture_name);
         render_graph->render_node()->set_colour_input(texture_node);
 
-        enemies.push_back(
-            {.script_file = enemy["script"].as<std::string>(),
-             .mesh = mesh,
-             .render_graph = std::move(render_graph),
-             .skeleton = iris::Root::mesh_manager().load_skeleton(mesh_name),
-             .animations = iris::Root::mesh_manager().load_animations(mesh_name),
-             .position = get_vector3(enemy["position"]),
-             .orientation = get_quaternion(enemy["orientation"]),
-             .scale = get_vector3(enemy["scale"])});
-    }
+        const auto script_file = enemy["script"].as<std::string>();
 
-    return enemies;
+        auto *health_bar = scene.create_entity(
+            nullptr,
+            iris::Root::mesh_manager().sprite({100.0f, 0.0f, 0.0f}),
+            iris::Transform({}, {}, {1.5f, 0.1f, 1.0f}));
+
+        auto *entity = scene.create_entity(
+            scene.add(std::move(render_graph)), mesh, iris::Transform(position, orientation, scale), skeleton);
+        game_objects.emplace_back(std::make_unique<Enemy>(
+            ps, script_file, entity, health_bar, animations, bounds_min, bounds_max, player, camera));
+    }
 }
 
 std::tuple<iris::Transform, std::string> YamlZoneLoader::portal()
 {
-    const auto portal = *yaml_file_["portal"].begin();
+    const auto n = yaml_file_["name"].as<std::string>();
+    const auto &portal = yaml_file_["portal"];
+    const auto p = portal["position"];
+    const auto s = portal["scale"];
+    const auto d = portal["destination"];
 
     return {
         iris::Transform{get_vector3(portal["position"]), {}, get_vector3(portal["scale"])},
