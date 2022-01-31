@@ -143,6 +143,11 @@ iris::Camera *ThirdPersonCamera::camera()
     return &camera_;
 }
 
+const iris::Camera *ThirdPersonCamera::camera() const
+{
+    return &camera_;
+}
+
 void ThirdPersonCamera::handle_message(MessageType message_type, const std::any &data)
 {
     switch (message_type)

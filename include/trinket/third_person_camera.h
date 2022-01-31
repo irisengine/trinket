@@ -30,6 +30,7 @@ class ThirdPersonCamera : public GameObject, Subscriber
     ~ThirdPersonCamera() override = default;
     void update(std::chrono::microseconds) override;
     iris::Camera *camera();
+    const iris::Camera *camera() const;
 
   protected:
     void handle_message(MessageType message_type, const std::any &data) override;
