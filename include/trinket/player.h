@@ -17,10 +17,10 @@
 #include "iris/graphics/animation/animation_controller.h"
 #include "iris/graphics/render_entity.h"
 #include "iris/graphics/scene.h"
-#include "iris/physics/character_controller.h"
 #include "iris/physics/physics_system.h"
 #include "iris/physics/rigid_body.h"
 
+#include "character_controller.h"
 #include "game_object.h"
 #include "message_type.h"
 #include "publisher.h"
@@ -46,7 +46,7 @@ class Player : public GameObject, Publisher, Subscriber
 
   private:
     iris::RenderEntity *render_entity_;
-    iris::CharacterController *character_controller_;
+    CharacterController *character_controller_;
     iris::RenderEntity *sword_;
     iris::RigidBody *sword_body_;
     bool attacking_;

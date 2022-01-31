@@ -112,6 +112,7 @@ Player::Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 
 
     subscribe(MessageType::MOUSE_BUTTON_PRESS);
     subscribe(MessageType::KEY_PRESS);
+    subscribe(MessageType::ENEMY_ATTACK);
 }
 
 void Player::update(std::chrono::microseconds)
@@ -239,6 +240,11 @@ void Player::handle_message(MessageType message_type, const std::any &data)
                 }
             }
 
+            break;
+        }
+        case MessageType::ENEMY_ATTACK:
+        {
+            LOG_DEBUG("player", "hit!");
             break;
         }
         default: break;

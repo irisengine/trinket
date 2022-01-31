@@ -17,26 +17,34 @@
 #include "iris/graphics/animation/animation_controller.h"
 #include "iris/graphics/render_entity.h"
 #include "iris/graphics/scene.h"
-#include "iris/physics/character_controller.h"
 #include "iris/physics/physics_system.h"
 #include "iris/physics/rigid_body.h"
 #include "iris/scripting/script_runner.h"
 
+#include "character_controller.h"
 #include "game_object.h"
 #include "message_type.h"
+#include "player.h"
+#include "publisher.h"
 #include "subscriber.h"
+#include "third_person_camera.h"
 
 namespace trinket
 {
 
-class Enemy : public GameObject, Subscriber
+class Enemy : public GameObject, Subscriber, Publisher
 {
   public:
     Enemy(
         iris::PhysicsSystem *ps,
         const std::string &script_file,
         iris::RenderEntity *render_entity,
-        const std::vector<iris::Animation> &animations);
+        iris::RenderEntity *health_bar,
+        std::vector<iris::Animation> animations,
+        const iris::Vector3 &bounds_min,
+        const iris::Vector3 &bounds_max,
+        const Player *player,
+        const ThirdPersonCamera *camera);
     ~Enemy() override = default;
 
     void update(std::chrono::microseconds elapsed) override;
@@ -46,8 +54,15 @@ class Enemy : public GameObject, Subscriber
   private:
     iris::ScriptRunner script_;
     iris::RenderEntity *render_entity_;
+    iris::RenderEntity *health_bar_;
     std::unique_ptr<iris::AnimationController> animation_controller_;
-    iris::CharacterController *character_controller_;
+    CharacterController *character_controller_;
+    const Player *player_;
+    const ThirdPersonCamera *camera_;
+    std::chrono::system_clock::time_point hit_cooldown_;
+    iris::Vector3 health_bar_scale_;
+    float health_;
+    bool is_dead_;
 };
 
 }

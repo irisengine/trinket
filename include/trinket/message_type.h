@@ -19,6 +19,7 @@ enum class MessageType : std::uint16_t
     KEY_PRESS,
     SCROLL_WHEEL,
     WEAPON_COLLISION,
+    ENEMY_ATTACK,
 };
 
 }
