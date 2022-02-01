@@ -145,7 +145,7 @@ void Game::run_zone()
 
             for (const auto &contact : ps->contacts(portal_))
             {
-                if (contact.contact_b == player->rigid_body())
+                if (contact.contact == player->rigid_body())
                 {
                     auto destination = std::find_if(
                         std::begin(zone_loaders_),

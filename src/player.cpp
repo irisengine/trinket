@@ -131,9 +131,9 @@ void Player::update(std::chrono::microseconds)
         // get all contact points the sword is making (ignoring the player) and publish a message
         for (auto &contact : ps_->contacts(sword_body_))
         {
-            if (contact.contact_b != character_controller_->rigid_body())
+            if (contact.contact != character_controller_->rigid_body())
             {
-                publish(MessageType::WEAPON_COLLISION, {std::make_tuple(contact.contact_b, contact.position)});
+                publish(MessageType::WEAPON_COLLISION, {std::make_tuple(contact.contact, contact.position)});
             }
         }
     }
