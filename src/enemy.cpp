@@ -13,8 +13,8 @@
 #include "iris/core/resource_loader.h"
 #include "iris/core/vector3.h"
 #include "iris/graphics/animation/animation_layer.h"
-#include "iris/graphics/render_entity.h"
 #include "iris/graphics/scene.h"
+#include "iris/graphics/single_entity.h"
 #include "iris/log/log.h"
 #include "iris/physics/physics_system.h"
 #include "iris/physics/rigid_body.h"
@@ -32,8 +32,8 @@ namespace trinket
 Enemy::Enemy(
     iris::PhysicsSystem *ps,
     const std::string &script_file,
-    iris::RenderEntity *render_entity,
-    iris::RenderEntity *health_bar,
+    iris::SingleEntity *render_entity,
+    iris::SingleEntity *health_bar,
     std::vector<iris::Animation> animations,
     const iris::Vector3 &bounds_min,
     const iris::Vector3 &bounds_max,
@@ -53,10 +53,9 @@ Enemy::Enemy(
 {
     script_.execute("init", bounds_min, bounds_max);
 
-    auto find = std::find_if(
-        std::begin(animations),
-        std::end(animations),
-        [](const iris::Animation &animation) { return animation.name() == "Death_Back"; });
+    auto find = std::find_if(std::begin(animations), std::end(animations), [](const iris::Animation &animation) {
+        return animation.name() == "Death_Back";
+    });
     find->set_playback_type(iris::PlaybackType::SINGLE);
 
     animation_controller_ = std::make_unique<iris::AnimationController>(
@@ -72,7 +71,7 @@ Enemy::Enemy(
              "Walk"}},
         render_entity_->skeleton());
 
-    character_controller_ = ps->create_character_controller<CharacterController>(ps, 1.0f, 0.5f, 0.5f, 2.0f);
+    character_controller_ = ps->create_character_controller<CharacterController>(ps, 1.0f, 1.0f, 0.5f, 2.0f);
     character_controller_->reposition(render_entity_->position(), {});
 
     subscribe(MessageType::WEAPON_COLLISION);
@@ -89,9 +88,11 @@ void Enemy::update(std::chrono::microseconds elapsed)
             static_cast<std::int32_t>(elapsed.count()),
             health_);
 
+        static const iris::Vector3 offset{0.0f, -2.0f, 0.0f};
+
         character_controller_->set_movement_direction(script_.execute<iris::Vector3>("get_walk_direction"));
         render_entity_->set_orientation(script_.execute<iris::Quaternion>("get_orientation"));
-        render_entity_->set_position(character_controller_->position());
+        render_entity_->set_position(character_controller_->position() + offset);
 
         iris::Transform billboard_transform{iris::Matrix4::invert(camera_->camera()->view())};
         billboard_transform.set_translation(render_entity_->position() + iris::Vector3{0.0f, 3.0f, 0.0f});
@@ -106,13 +107,15 @@ void Enemy::update(std::chrono::microseconds elapsed)
 
         if (const auto attack = script_.execute<bool>("attack_player"); attack)
         {
-            publish(MessageType::ENEMY_ATTACK, {0.0f});
+            publish(MessageType::ENEMY_ATTACK, {1.0f});
         }
 
         if (health_ <= 0.0f)
         {
             character_controller_->reposition(render_entity_->position(), {});
             is_dead_ = true;
+
+            publish(MessageType::KILLED_ENEMY, {this});
         }
     }
 
@@ -144,6 +147,11 @@ void Enemy::handle_message(MessageType message_type, const std::any &data)
         }
         default: break;
     }
+}
+
+iris::Vector3 Enemy::position() const
+{
+    return render_entity_->position();
 }
 
 }

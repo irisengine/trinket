@@ -20,6 +20,10 @@ enum class MessageType : std::uint16_t
     SCROLL_WHEEL,
     WEAPON_COLLISION,
     ENEMY_ATTACK,
+    PLAYER_HEALTH_CHANGE,
+    KILLED_ENEMY,
+    LEVEL_PROGRESS,
+    OBJECT_COLLISION,
 };
 
 }

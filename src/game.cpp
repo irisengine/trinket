@@ -19,15 +19,20 @@
 #include "iris/core/colour.h"
 #include "iris/core/error_handling.h"
 #include "iris/core/looper.h"
+#include "iris/core/random.h"
 #include "iris/core/root.h"
 #include "iris/core/transform.h"
 #include "iris/events/event.h"
 #include "iris/graphics/mesh_manager.h"
-#include "iris/graphics/render_entity.h"
+#include "iris/graphics/render_graph/component_node.h"
+#include "iris/graphics/render_graph/conditional_node.h"
 #include "iris/graphics/render_graph/render_graph.h"
 #include "iris/graphics/render_graph/texture_node.h"
-#include "iris/graphics/render_pass.h"
+#include "iris/graphics/render_graph/value_node.h"
+#include "iris/graphics/render_pipeline.h"
+#include "iris/graphics/render_target_manager.h"
 #include "iris/graphics/scene.h"
+#include "iris/graphics/single_entity.h"
 #include "iris/graphics/texture_manager.h"
 #include "iris/graphics/window.h"
 #include "iris/graphics/window_manager.h"
@@ -39,6 +44,7 @@
 #include "config.h"
 #include "enemy.h"
 #include "game_object.h"
+#include "hud.h"
 #include "input_handler.h"
 #include "maths.h"
 #include "message_type.h"
@@ -65,10 +71,10 @@ Game::Game(std::unique_ptr<Config> config, std::vector<std::unique_ptr<ZoneLoade
 {
     const auto starting_zone_name = config_->string_option(ConfigOption::STARTING_ZONE);
 
-    auto starting_zone = std::find_if(
-        std::begin(zone_loaders_),
-        std::end(zone_loaders_),
-        [&starting_zone_name](auto &element) { return element->name() == starting_zone_name; });
+    auto starting_zone =
+        std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [&starting_zone_name](auto &element) {
+            return element->name() == starting_zone_name;
+        });
 
     iris::ensure(starting_zone != std::end(zone_loaders_), "missing starting zone");
 
@@ -96,61 +102,88 @@ void Game::run_zone()
 {
     auto *ps = iris::Root::physics_manager().create_physics_system();
     auto &mesh_manager = iris::Root::mesh_manager();
+    auto &rtm = iris::Root::texture_manager();
+
+    auto render_pipeline = std::make_unique<iris::RenderPipeline>(window_->width(), window_->height());
 
     // basic scene setup
-    iris::Scene scene{};
+    auto *game_scene = render_pipeline->create_scene();
+    auto *rt = iris::Root::render_target_manager().create();
 
     std::vector<std::unique_ptr<GameObject>> objects{};
     objects.emplace_back(std::make_unique<InputHandler>(window_));
-    objects.emplace_back(std::make_unique<Player>(scene, ps, current_zone_->player_start_position()));
+    objects.emplace_back(
+        std::make_unique<Player>(game_scene, ps, current_zone_->player_start_position(), *render_pipeline));
     auto *player = static_cast<Player *>(objects.back().get());
 
     objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window_->width(), window_->height(), ps));
     auto *camera = static_cast<ThirdPersonCamera *>(objects.back().get());
 
-    current_zone_->load_static_geometry(ps, scene);
-    current_zone_->load_enemies(ps, scene, objects, player, camera);
+    objects.emplace_back(std::make_unique<HUD>(100.0f, rt->width(), rt->height()));
+    auto *hud = static_cast<HUD *>(objects.back().get());
 
-    scene.set_ambient_light({0.2f, 0.2f, 0.2f, 1.0f});
-    auto *light = scene.create_light<iris::PointLight>(iris::Vector3{10.0f}, iris::Colour{100.0f, 100.0f, 100.0f});
+    auto *final_scene = render_pipeline->create_scene();
+    auto *rg = render_pipeline->create_render_graph();
+    rg->render_node()->set_colour_input(rg->create<iris::TextureNode>(rt->colour_texture()));
+    final_scene->create_entity<iris::SingleEntity>(
+        rg,
+        mesh_manager.sprite({}),
+        iris::Transform{{}, {}, {static_cast<float>(window_->width()), static_cast<float>(window_->height()), 0.0f}});
+    iris::Camera final_camera{iris::CameraType::ORTHOGRAPHIC, window_->width(), window_->height()};
+
+    current_zone_->load_static_geometry(ps, game_scene, *render_pipeline);
+    current_zone_->load_enemies(ps, game_scene, *render_pipeline, objects, player, camera);
+
+    game_scene->set_ambient_light({0.5f, 0.5f, 0.5f, 1.0f});
+    auto *light = game_scene->create_light<iris::PointLight>(iris::Vector3{10.0f}, iris::Colour{10.0f, 10.0f, 10.0f});
+    game_scene->create_light<iris::DirectionalLight>(iris::Vector3{0.0, -1.0f, 0.0f}, true);
 
     const auto [portal_transform, destination] = current_zone_->portal();
-    scene.create_entity(nullptr, mesh_manager.cube({}), portal_transform);
+    game_scene->create_entity<iris::SingleEntity>(nullptr, mesh_manager.cube({}), portal_transform);
     portal_ = ps->create_rigid_body(
         portal_transform.translation(),
         ps->create_box_collision_shape(portal_transform.scale()),
         iris::RigidBodyType::GHOST);
     portal_destination_ = destination;
 
-    auto debug_mesh = mesh_manager.unique_cube({});
-
     if (config_->bool_option(ConfigOption::PHYSICS_DEBUG_DRAW))
     {
-        auto *debug_draw = scene.create_entity(nullptr, debug_mesh.get(), iris::Vector3{}, iris::PrimitiveType::LINES);
-        ps->enable_debug_draw(debug_draw);
+        ps->enable_debug_draw(game_scene);
     }
 
-    const auto sky_box = iris::Root::texture_manager().create(
+    const auto *game_sky_box = iris::Root::texture_manager().create(
         iris::Colour{0.275f, 0.51f, 0.796f}, iris::Colour{0.5f, 0.5f, 0.5f}, 2048u, 2048u);
 
-    iris::RenderPass render_pass{&scene, camera->camera(), nullptr, sky_box};
-    window_->set_render_passes({render_pass});
+    auto *game_pass = render_pipeline->create_render_pass(game_scene);
+    game_pass->camera = camera->camera();
+    game_pass->colour_target = rt;
+    game_pass->sky_box = game_sky_box;
+    game_pass->post_processing_description = {
+        .ambient_occlusion = iris::AmbientOcclusionDescription{},
+    };
+
+    auto *final_pass = render_pipeline->create_render_pass(final_scene);
+    final_pass->camera = &final_camera;
+    final_pass->post_processing_description = {//.bloom = iris::BloomDescription{.threshold = 4.0f},
+                                               .colour_adjust = iris::ColourAdjustDescription{},
+                                               .anti_aliasing = iris::AntiAliasingDescription{}};
+
+    window_->set_render_pipeline(std::move(render_pipeline));
 
     iris::Looper looper{
         0ms,
         16ms,
-        [ps, player, this](auto, std::chrono::microseconds delta)
-        {
+        [ps, player, this](auto, std::chrono::microseconds delta) {
             ps->step(std::chrono::duration_cast<std::chrono::milliseconds>(delta));
 
             for (const auto &contact : ps->contacts(portal_))
             {
                 if (contact.contact == player->rigid_body())
                 {
-                    auto destination = std::find_if(
-                        std::begin(zone_loaders_),
-                        std::end(zone_loaders_),
-                        [this](auto &element) { return element->name() == portal_destination_; });
+                    auto destination =
+                        std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [this](auto &element) {
+                            return element->name() == portal_destination_;
+                        });
 
                     iris::ensure(destination != std::cend(zone_loaders_), "missing zone");
 
@@ -160,8 +193,7 @@ void Game::run_zone()
 
             return true;
         },
-        [&](std::chrono::microseconds elapsed, auto)
-        {
+        [&](std::chrono::microseconds elapsed, auto) {
             light->set_position(player->position() + iris::Vector3{0.0f, 10.0f, 0.0f});
 
             for (auto &object : objects)

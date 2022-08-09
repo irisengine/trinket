@@ -11,15 +11,21 @@
 #include <string>
 #include <vector>
 
+#include "iris/core/error_handling.h"
 #include "iris/core/quaternion.h"
 #include "iris/core/resource_loader.h"
 #include "iris/core/root.h"
 #include "iris/core/vector3.h"
 #include "iris/graphics/mesh_manager.h"
+#include "iris/graphics/render_graph/arithmetic_node.h"
 #include "iris/graphics/render_graph/render_graph.h"
 #include "iris/graphics/render_graph/texture_node.h"
+#include "iris/graphics/render_graph/value_node.h"
+#include "iris/graphics/render_graph/vertex_node.h"
 #include "iris/graphics/scene.h"
+#include "iris/graphics/single_entity.h"
 #include "iris/graphics/skeleton.h"
+#include "iris/graphics/texture_manager.h"
 #include "iris/graphics/vertex_data.h"
 #include "iris/log/log.h"
 #include "iris/physics/collision_shape.h"
@@ -95,40 +101,115 @@ iris::Vector3 YamlZoneLoader::player_start_position()
     return get_vector3(yaml_file_["player_start_position"]);
 }
 
-void YamlZoneLoader::load_static_geometry(iris::PhysicsSystem *ps, iris::Scene &scene)
+void YamlZoneLoader::load_static_geometry(
+    iris::PhysicsSystem *ps,
+    iris::Scene *scene,
+    iris::RenderPipeline &render_pipeline)
 {
+    std::unordered_map<const iris::Mesh *, std::vector<iris::Transform>> instances{};
+    std::unordered_map<const iris::Mesh *, iris::RenderGraph *> render_graphs{};
+
     for (const auto &geometry : yaml_file_["static_geometry"])
     {
         const auto position = get_vector3(geometry["position"]);
         const auto orientation = get_quaternion(geometry["orientation"]);
         const auto scale = get_vector3(geometry["scale"]);
-
         const auto mesh_type = geometry["mesh_type"].as<std::string>();
-        const auto *mesh = (mesh_type == "cube") ? iris::Root::mesh_manager().cube({1.0f, 1.0f, 0.0f})
-                                                 : iris::Root::mesh_manager().load_mesh(mesh_type);
-        const auto texture_name = geometry["texture"].as<std::string>();
 
-        auto render_graph = std::make_unique<iris::RenderGraph>();
-        auto *texture_node = render_graph->create<iris::TextureNode>(texture_name);
-        render_graph->render_node()->set_colour_input(texture_node);
+        std::vector<const iris::Mesh *> meshes{};
 
-        scene.create_entity(scene.add(std::move(render_graph)), mesh, iris::Transform{position, orientation, scale});
-
-        if (geometry["rigid_body"].as<bool>())
+        if (mesh_type == "cube")
         {
-            const auto *collision_shape = geometry["rigid_body_type"].as<std::string>() == "bounding_box"
-                                              ? ps->create_box_collision_shape(bounding_box(mesh, scale))
-                                              : ps->create_mesh_collision_shape(mesh, scale);
-            auto *body = ps->create_rigid_body(position, collision_shape, iris::RigidBodyType::STATIC);
-            body->reposition(position, orientation);
-            body->set_name(mesh_type);
+            meshes.push_back(iris::Root::mesh_manager().cube({}));
+        }
+        else
+        {
+            const auto mesh_data = iris::Root::mesh_manager().load_mesh(mesh_type).mesh_data;
+            std::transform(
+                std::begin(mesh_data), std::end(mesh_data), std::back_inserter(meshes), [](const auto &element) {
+                    return element.mesh;
+                });
+        }
+
+        int tex_count = 0u;
+
+        for (const auto *mesh : meshes)
+        {
+            instances[mesh].emplace_back(position, orientation, scale);
+            render_graphs.try_emplace(mesh, nullptr);
+
+            if (geometry["texture"])
+            {
+                const auto texture_name = geometry["texture"][tex_count].as<std::string>();
+                ++tex_count;
+
+                render_graphs[mesh] = render_pipeline.create_render_graph();
+                iris::TextureNode *texture_node = nullptr;
+
+                if (geometry["texture_scale"])
+                {
+                    auto *rg = render_graphs[mesh];
+                    texture_node = rg->create<iris::TextureNode>(
+                        texture_name,
+                        iris::TextureUsage::IMAGE,
+                        nullptr,
+                        iris::UVSource::NODE,
+                        rg->create<iris::ArithmeticNode>(
+                            rg->create<iris::VertexNode>(iris::VertexDataType::UV),
+                            rg->create<iris::ValueNode<iris::Vector3>>(
+                                iris::Vector3{geometry["texture_scale"].as<float>()}),
+                            iris::ArithmeticOperator::MULTIPLY));
+                }
+                else
+                {
+                    const auto *sampler = iris::Root::texture_manager().create(iris::SamplerDescriptor{
+                        .minification_filter = iris::SamplerFilter::NEAREST,
+                        .magnification_filter = iris::SamplerFilter::NEAREST,
+                        .uses_mips = false,
+                        .mip_filter = iris::SamplerFilter::LINEAR});
+                    texture_node = render_graphs[mesh]->create<iris::TextureNode>(
+                        texture_name, iris::TextureUsage::IMAGE, sampler);
+                }
+
+                render_graphs[mesh]->render_node()->set_colour_input(texture_node);
+
+                if (geometry["normal"])
+                {
+                    const auto normal_name = geometry["normal"].as<std::string>();
+                    auto *normal_node = render_graphs[mesh]->create<iris::TextureNode>(normal_name);
+                    render_graphs[mesh]->render_node()->set_normal_input(normal_node);
+                }
+            }
+
+            if (geometry["rigid_body"].as<bool>())
+            {
+                const auto *collision_shape = geometry["rigid_body_type"].as<std::string>() == "bounding_box"
+                                                  ? ps->create_box_collision_shape(bounding_box(mesh, scale))
+                                                  : ps->create_mesh_collision_shape(mesh, scale);
+                auto *body = ps->create_rigid_body(position, collision_shape, iris::RigidBodyType::STATIC);
+                body->reposition(position, orientation);
+                body->set_name(mesh_type);
+            }
+        }
+    }
+
+    for (const auto &[mesh, transforms] : instances)
+    {
+        if (transforms.size() == 1)
+        {
+            scene->create_entity<iris::SingleEntity>(render_graphs[mesh], mesh, transforms.front());
+        }
+        else
+        {
+            scene->create_entity<iris::InstancedEntity>(render_graphs[mesh], mesh, transforms);
         }
     }
 }
 
 void YamlZoneLoader::load_enemies(
     iris::PhysicsSystem *ps,
-    iris::Scene &scene,
+    iris::Scene *scene,
+    iris::RenderPipeline &render_pipeline,
     std::vector<std::unique_ptr<GameObject>> &game_objects,
     Player *player,
     ThirdPersonCamera *camera)
@@ -143,26 +224,28 @@ void YamlZoneLoader::load_enemies(
         const auto bounds_max = get_vector3(enemy["bounds_max"]);
 
         const auto mesh_name = enemy["mesh"].as<std::string>();
-        const auto *mesh = iris::Root::mesh_manager().load_mesh(mesh_name);
+        const auto mesh_data = iris::Root::mesh_manager().load_mesh(mesh_name);
+        iris::expect(mesh_data.mesh_data.size() == 1u, "expecting only one mesh");
         const auto texture_name = enemy["texture"].as<std::string>();
-        const auto skeleton = iris::Root::mesh_manager().load_skeleton(mesh_name);
-        const auto animations = iris::Root::mesh_manager().load_animations(mesh_name);
 
-        auto render_graph = std::make_unique<iris::RenderGraph>();
+        auto render_graph = render_pipeline.create_render_graph();
         auto *texture_node = render_graph->create<iris::TextureNode>(texture_name);
         render_graph->render_node()->set_colour_input(texture_node);
 
         const auto script_file = enemy["script"].as<std::string>();
 
-        auto *health_bar = scene.create_entity(
+        auto *health_bar = scene->create_entity<iris::SingleEntity>(
             nullptr,
-            iris::Root::mesh_manager().sprite({100.0f, 0.0f, 0.0f}),
+            iris::Root::mesh_manager().sprite({1.0f, 0.0f, 0.0f}),
             iris::Transform({}, {}, {1.5f, 0.1f, 1.0f}));
 
-        auto *entity = scene.create_entity(
-            scene.add(std::move(render_graph)), mesh, iris::Transform(position, orientation, scale), skeleton);
+        auto *entity = scene->create_entity<iris::SingleEntity>(
+            render_graph,
+            mesh_data.mesh_data.front().mesh,
+            iris::Transform(position, orientation, scale),
+            mesh_data.skeleton);
         game_objects.emplace_back(std::make_unique<Enemy>(
-            ps, script_file, entity, health_bar, animations, bounds_min, bounds_max, player, camera));
+            ps, script_file, entity, health_bar, mesh_data.animations, bounds_min, bounds_max, player, camera));
     }
 }
 

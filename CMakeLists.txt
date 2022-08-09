@@ -6,7 +6,7 @@ project(
   DESCRIPTION "Game built with iris"
   LANGUAGES C CXX)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 
 include(FetchContent)
 
@@ -15,6 +15,7 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
   GIT_TAG yaml-cpp-0.7.0)
 FetchContent_GetProperties(yaml-cpp)
+
 if(NOT yaml-cpp_POPULATED)
   FetchContent_Populate(yaml-cpp)
   add_subdirectory(${yaml-cpp_SOURCE_DIR} ${yaml-cpp_BINARY_DIR} EXCLUDE_FROM_ALL)

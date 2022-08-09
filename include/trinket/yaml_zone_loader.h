@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "iris/core/vector3.h"
+#include "iris/graphics/render_pipeline.h"
 #include "iris/graphics/scene.h"
 #include "iris/physics/physics_system.h"
 
@@ -31,10 +32,12 @@ class YamlZoneLoader : public ZoneLoader
     ~YamlZoneLoader() override = default;
     std::string name() override;
     iris::Vector3 player_start_position() override;
-    void load_static_geometry(iris::PhysicsSystem *ps, iris::Scene &scene) override;
+    void load_static_geometry(iris::PhysicsSystem *ps, iris::Scene *scene, iris::RenderPipeline &render_pipeline)
+        override;
     void load_enemies(
         iris::PhysicsSystem *ps,
-        iris::Scene &scene,
+        iris::Scene *scene,
+        iris::RenderPipeline &render_pipeline,
         std::vector<std::unique_ptr<GameObject>> &game_objects,
         Player *player,
         ThirdPersonCamera *camera) override;

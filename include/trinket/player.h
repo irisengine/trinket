@@ -8,15 +8,17 @@
 
 #include <any>
 #include <chrono>
-#include <map>
 #include <memory>
 #include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "iris/core/quaternion.h"
 #include "iris/core/vector3.h"
 #include "iris/graphics/animation/animation_controller.h"
-#include "iris/graphics/render_entity.h"
+#include "iris/graphics/render_pipeline.h"
 #include "iris/graphics/scene.h"
+#include "iris/graphics/single_entity.h"
 #include "iris/physics/physics_system.h"
 #include "iris/physics/rigid_body.h"
 
@@ -32,7 +34,11 @@ namespace trinket
 class Player : public GameObject, Publisher, Subscriber
 {
   public:
-    Player(iris::Scene &scene, iris::PhysicsSystem *ps, const iris::Vector3 &start_position);
+    Player(
+        iris::Scene *scene,
+        iris::PhysicsSystem *ps,
+        const iris::Vector3 &start_position,
+        iris::RenderPipeline &render_pipeline);
     ~Player() override = default;
 
     void update(std::chrono::microseconds) override;
@@ -45,9 +51,15 @@ class Player : public GameObject, Publisher, Subscriber
     void handle_message(MessageType message_type, const std::any &data) override;
 
   private:
-    iris::RenderEntity *render_entity_;
+    struct SubMesh
+    {
+        std::string bone_attach;
+        iris::Matrix4 transform;
+        iris::Vector3 offset;
+    };
+
+    std::vector<iris::SingleEntity *> render_entities_;
     CharacterController *character_controller_;
-    iris::RenderEntity *sword_;
     iris::RigidBody *sword_body_;
     bool attacking_;
     std::chrono::system_clock::time_point attack_stop_;
@@ -58,6 +70,14 @@ class Player : public GameObject, Publisher, Subscriber
     bool blending_;
     std::unique_ptr<iris::AnimationController> animation_controller_;
     std::uint32_t move_key_pressed_;
+    float health_;
+    iris::Skeleton *skeleton_;
+    std::unordered_map<iris::SingleEntity *, SubMesh> sub_meshes_;
+    iris::SingleEntity *sword_entity_;
+    std::uint32_t xp_;
+    std::uint32_t next_level_;
+    bool lock_ = false;
+    iris::Vector3 p;
 };
 
 }

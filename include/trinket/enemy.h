@@ -15,8 +15,8 @@
 #include "iris/core/vector3.h"
 #include "iris/graphics/animation/animation.h"
 #include "iris/graphics/animation/animation_controller.h"
-#include "iris/graphics/render_entity.h"
 #include "iris/graphics/scene.h"
+#include "iris/graphics/single_entity.h"
 #include "iris/physics/physics_system.h"
 #include "iris/physics/rigid_body.h"
 #include "iris/scripting/script_runner.h"
@@ -38,8 +38,8 @@ class Enemy : public GameObject, Subscriber, Publisher
     Enemy(
         iris::PhysicsSystem *ps,
         const std::string &script_file,
-        iris::RenderEntity *render_entity,
-        iris::RenderEntity *health_bar,
+        iris::SingleEntity *render_entity,
+        iris::SingleEntity *health_bar,
         std::vector<iris::Animation> animations,
         const iris::Vector3 &bounds_min,
         const iris::Vector3 &bounds_max,
@@ -50,11 +50,12 @@ class Enemy : public GameObject, Subscriber, Publisher
     void update(std::chrono::microseconds elapsed) override;
 
     void handle_message(MessageType message_type, const std::any &data) override;
+    iris::Vector3 position() const;
 
   private:
     iris::ScriptRunner script_;
-    iris::RenderEntity *render_entity_;
-    iris::RenderEntity *health_bar_;
+    iris::SingleEntity *render_entity_;
+    iris::SingleEntity *health_bar_;
     std::unique_ptr<iris::AnimationController> animation_controller_;
     CharacterController *character_controller_;
     const Player *player_;
