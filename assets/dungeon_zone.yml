@@ -21,7 +21,7 @@ enemies:
   - 0.01
   - 0.01
   script: basic_enemy.lua
-  texture: Mushroom_Texture.png
+  texture: 'Mushroom_Texture.png'
 - bounds_max:
   - 135.0
   - 0.0
@@ -44,7 +44,7 @@ enemies:
   - 0.01
   - 0.01
   script: basic_enemy.lua
-  texture: Mushroom_Texture.png
+  texture: 'Mushroom_Texture.png'
 - bounds_max:
   - 135.0
   - 0.0
@@ -67,7 +67,7 @@ enemies:
   - 0.01
   - 0.01
   script: basic_enemy.lua
-  texture: Mushroom_Texture.png
+  texture: 'Mushroom_Texture.png'
 - bounds_max:
   - 135.0
   - 0.0
@@ -90,7 +90,7 @@ enemies:
   - 0.01
   - 0.01
   script: basic_enemy.lua
-  texture: Mushroom_Texture.png
+  texture: 'Mushroom_Texture.png'
 name: dungeon
 player_start_position:
 - 20.0
@@ -122,7 +122,7 @@ static_geometry:
   - 1000.0
   - 1000.0
   - 1000.0
-  texture: grass.png
+  texture: ['grass.png']
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -137,7 +137,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -153,7 +152,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -169,7 +167,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -185,7 +182,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -200,7 +196,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -216,7 +211,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -232,7 +226,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -247,7 +240,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -262,7 +254,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -278,7 +269,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -293,7 +283,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -309,7 +298,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -325,7 +313,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -341,7 +328,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -356,7 +342,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -372,7 +357,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -387,7 +371,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -402,7 +385,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -418,7 +400,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -433,7 +414,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -449,7 +429,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -465,7 +444,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -480,7 +458,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -496,7 +473,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -511,7 +487,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -526,7 +501,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -542,7 +516,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -558,7 +531,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -573,7 +545,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -589,7 +560,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -605,7 +575,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -620,7 +589,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -636,7 +604,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -652,7 +619,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -667,7 +633,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -683,7 +648,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -699,7 +663,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -714,7 +677,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -730,7 +692,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -746,7 +707,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -761,7 +721,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -777,7 +736,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -793,7 +751,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -808,7 +765,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -824,7 +780,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -840,7 +795,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -855,7 +809,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -871,7 +824,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -887,7 +839,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -902,7 +853,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -918,7 +868,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -934,7 +883,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -949,7 +897,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -965,7 +912,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -981,7 +927,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -996,7 +941,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1012,7 +956,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1028,7 +971,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1043,7 +985,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1058,7 +999,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1074,7 +1014,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1089,7 +1028,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1105,7 +1043,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1120,7 +1057,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1136,7 +1072,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1152,7 +1087,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1167,7 +1101,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1183,7 +1116,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1199,7 +1131,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1214,7 +1145,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1230,7 +1160,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1246,7 +1175,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1261,7 +1189,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1277,7 +1204,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1293,7 +1219,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1308,7 +1233,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1324,7 +1248,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1340,7 +1263,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1355,7 +1277,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1371,7 +1292,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1387,7 +1307,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1402,7 +1321,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1418,7 +1336,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1433,7 +1350,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1448,7 +1364,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1463,7 +1378,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1478,7 +1392,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1493,7 +1406,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1509,7 +1421,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1524,7 +1435,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1540,7 +1450,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1555,7 +1464,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1570,7 +1478,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1585,7 +1492,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1600,7 +1506,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1615,7 +1520,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1631,7 +1535,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1646,7 +1549,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1662,7 +1564,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1677,7 +1578,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1692,7 +1592,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1707,7 +1606,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1722,7 +1620,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1737,7 +1634,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1753,7 +1649,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1768,7 +1663,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1784,7 +1678,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1800,7 +1693,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1815,7 +1707,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1831,7 +1722,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1846,7 +1736,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1862,7 +1751,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1877,7 +1765,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1893,7 +1780,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1908,7 +1794,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1924,7 +1809,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Floor_Modular.fbx
   orientation:
   - 0.0
@@ -1939,7 +1823,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Floor_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1955,7 +1838,6 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 - mesh_type: Wall_Modular.fbx
   orientation:
   - 0.0
@@ -1971,5 +1853,4 @@ static_geometry:
   - 5.0
   - 5.0
   - 5.0
-  texture: Wall_Modular_Texture.png
 

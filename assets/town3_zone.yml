@@ -1,0 +1,1117 @@
+enemies: []
+name: town3
+player_start_position:
+- 20.317285910208664
+- 4.336497688775575
+- 4.436654169714794
+portal:
+  destination: town
+  position:
+  - -23.0
+  - 1.0
+  - 0.0
+  scale:
+  - 1.0
+  - 1.0
+  - 1.0
+static_geometry:
+- mesh_type: cube
+  orientation:
+  - 0.0
+  - 0.0
+  - 0.0
+  position:
+  - 0.0
+  - -1000.0
+  - 0.0
+  rigid_body: true
+  rigid_body_type: bounding_box
+  scale:
+  - 1000.0
+  - 1000.0
+  - 1000.0
+  texture:
+  - grass.jpg
+  texture_scale: 128.0
+- mesh_type: Bell_Tower.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 0.0
+  - 0.0
+  - 0.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: Blacksmith.fbx
+  orientation:
+  - 0
+  - -1.1728706660948884
+  - -1.5707963267948966
+  position:
+  - 48.271879756683816
+  - 0.0
+  - 2.03370375162926
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: House_1.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -11.892313709786581
+  - 0.0
+  - -27.500132022833526
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: House_2.fbx
+  orientation:
+  - 0
+  - 3.141592653589793
+  - -1.5707963267948966
+  position:
+  - -34.0541516594606
+  - 0.0
+  - -14.24037406188704
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: Inn.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 32.31066371817992
+  - 0.0
+  - -28.25973100173746
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: PineTree_1.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - 1.3292352183080216
+  - -1.5707963267948966
+  position:
+  - -35.03940427506076
+  - 0.0
+  - -37.74044571890905
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: &id001
+  - PineTree_Bark.png
+  - PineTree_Leaves.png
+- mesh_type: PineTree_2.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -53.57781245374136
+  - 0.0
+  - -28.56549280326713
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: &id002
+  - PineTree_Bark.png
+  - PineTree_Leaves.png
+- mesh_type: PineTree_3.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 5.051694204479108
+  - 0.0
+  - -33.16368034711198
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: &id003
+  - PineTree_Bark.png
+  - PineTree_Leaves.png
+- mesh_type: PineTree_5.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - -1.575503176110323
+  - -1.5707963267948966
+  position:
+  - 61.26780496371344
+  - 0.0
+  - -29.054515436280152
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: &id004
+  - PineTree_Bark.png
+  - PineTree_Leaves.png
+- mesh_type: PointyTower.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 90.0
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: Stable.fbx
+  orientation:
+  - 0
+  - -0.905878143784392
+  - -1.5707963267948966
+  position:
+  - 48.39472143508982
+  - 0.0
+  - 35.0576188098186
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -69.0
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -57.0
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -45.00000000000001
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -33.000000000000014
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -21.00000000000002
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -9.000000000000028
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 2.9999999999999645
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 14.999999999999957
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 26.99999999999995
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 38.99999999999994
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 50.999999999999936
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 62.99999999999993
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 74.99999999999991
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 86.99999999999991
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 86.99999999999991
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 50.999999999999936
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -69.0
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 62.99999999999993
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 14.999999999999957
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -57.0
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 74.99999999999991
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -69.0
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -45.00000000000001
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -33.000000000000014
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 26.99999999999995
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -21.00000000000002
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 38.99999999999994
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 2.9999999999999645
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -9.000000000000028
+  - 0.0
+  - 51.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.57094275353936
+  - 6.999999999999999
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - -47.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - -35.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - -1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - -23.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.570999999999998
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - -1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - -11.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.570999999999996
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - -1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - 1.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.570999999999996
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - -1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - 13.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.570999999999996
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - -1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - 25.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.570999999999996
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - -1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - 37.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.570999999999996
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - -1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - -74.0
+  - 0.0
+  - 49.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.570999999999996
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0
+  - 0.0
+  - -35.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0
+  - 0.0
+  - 25.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0
+  - 0.0
+  - 1.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0
+  - 0.0
+  - -23.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0
+  - 0.0
+  - 49.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0
+  - 0.0
+  - 13.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0
+  - 0.0
+  - -11.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0
+  - 0.0
+  - -47.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 1.5707963267948966
+  - -1.5707963267948966
+  position:
+  - 89.0619629207564
+  - 0.0
+  - 37.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - 11.571
+  - 7.0
+- mesh_type: TallWall.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -69.0
+  - 0.0
+  - -54.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.855555615894464
+  - -11.571
+  - 7.0
+- mesh_type: PineTree_1.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -49.53668831991615
+  - 0.0
+  - 10.499762868900193
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: *id001
+- mesh_type: PineTree_2.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - 1.0388906764392134
+  - -1.5707963267948966
+  position:
+  - 71.52978657361788
+  - 0.0
+  - -4.776775127494078
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: *id002
+- mesh_type: PineTree_3.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - 3.3241987352181273
+  - -1.5707963267948966
+  position:
+  - -8.837236050379035
+  - 0.0
+  - 24.254890523360693
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: *id003
+- mesh_type: PineTree_3.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - 0.9219291205532937
+  - -1.5707963267948966
+  position:
+  - 14.882860061331586
+  - 0.0
+  - 30.645406926289496
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: *id003
+- mesh_type: PineTree_3.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - -0.48367618510218957
+  - -1.5707963267948966
+  position:
+  - -0.19080440539970844
+  - 0.0
+  - 39.839526754280485
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: *id003
+- mesh_type: PineTree_3.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - -0.8701713591032694
+  - -1.5707963267948966
+  position:
+  - -32.27563663411559
+  - 0.0
+  - 9.70276483843162
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: *id003
+- mesh_type: PineTree_3.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - -3.284412400256687
+  - -1.5707963267948966
+  position:
+  - 4.79799670696177
+  - 0.0
+  - -20.88813145558696
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: *id003
+- mesh_type: PineTree_5.fbx
+  normal: PineTree_Bark_Normal.png
+  orientation:
+  - 0
+  - -1.5835747022802273
+  - -1.5707963267948966
+  position:
+  - 70.71200846086299
+  - 0.0
+  - 37.835327953754074
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+  texture: *id004
+- mesh_type: PointyTower.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -75.0
+  - 0.0
+  - 53.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: PointyTower.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -75.0
+  - 0.0
+  - -53.0
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: PointyTower.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - 89.32538487616151
+  - 0.0
+  - 52.51547352609497
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0

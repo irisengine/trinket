@@ -1,7 +1,7 @@
 ---
-screen_width: 800
-screen_height: 800
-graphics_api: default
-physics_debug_draw: true
-zones: ["town_zone.yml", "dungeon_zone.yml"]
-starting_zone: "dungeon"
+screen_width: 1920
+screen_height: 1080
+graphics_api: opengl
+physics_debug_draw: false
+zones: ["town3_zone.yml", "town2_zone.yml", "town_zone.yml", "dungeon_zone.yml"]
+starting_zone: "town3"

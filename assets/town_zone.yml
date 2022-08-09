@@ -9,57 +9,32 @@ static_geometry:
     texture: "grass.png"
     rigid_body: true
     rigid_body_type: bounding_box
-  - position: [0.0, -2.2, 40.0]
-    orientation: [0.0, 0.0, -1.570796327]
-    scale: [7.0, 7.0, 7.0]
-    mesh_type: "Inn.fbx"
-    texture: "Inn_Texture.png"
-    rigid_body: true
-    rigid_body_type: mesh
-  - position: [0.0, -2.2, 0.0]
-    orientation: [0.0, 0.0, -1.570796327]
-    scale: [7.0, 7.0, 7.0]
-    mesh_type: "Bell_Tower.fbx"
-    texture: "Bell_Tower_Texture.png"
-    rigid_body: true
-    rigid_body_type: mesh
-  - position: [40.0, -2.2, 0.0]
-    orientation: [0.0, -1.570796327, -1.570796327]
-    scale: [7.0, 7.0, 7.0]
-    mesh_type: "Blacksmith.fbx"
-    texture: "Blacksmith_Texture.png"
-    rigid_body: true
-    rigid_body_type: mesh
-  - position: [-40.0, -2.2, 0.0]
-    orientation: [0.0, 1.570796327, -1.570796327]
-    scale: [7.0, 7.0, 7.0]
-    mesh_type: "Sawmill.fbx"
-    texture: "Sawmill_Texture.png"
-    rigid_body: true
-    rigid_body_type: mesh
-  - position: [-60.0, -2.2, 0.0]
-    orientation: [0.0, 0.39269908169, -1.570796327]
-    scale: [7.0, 7.0, 7.0]
-    mesh_type: "PointyTower.fbx"
-    texture: "PointyTower_Texture.png"
-    rigid_body: true
-    rigid_body_type: "cube"
-  - position: [-60.0, -2.2, 10.0]
-    orientation: [0.0, -1.570796327, -1.570796327]
-    scale: [7.0, 7.0, 7.0]
-    mesh_type: "TallWall.fbx"
-    texture: "TallWall_Texture.png"
-    rigid_body: true
-    rigid_body_type: "cube"
-  - position: [-60.0, -2.2, 20.65]
-    orientation: [0.0, -1.570796327, -1.570796327]
-    scale: [7.0, 7.0, 7.0]
-    mesh_type: "TallWall.fbx"
-    texture: "TallWall_Texture.png"
-    rigid_body: true
-    rigid_body_type: "cube"
 portal:
     destination: dungeon
     position: [-10.0, 0.0, 0.0]
     scale: [0.5, 1.7, 0.5]
-enemies: []
+enemies:
+- bounds_max:
+  - 35.0
+  - 0.0
+  - 35.0
+  bounds_min:
+  - 5.0
+  - 0.0
+  - 5.0
+  mesh: Mushroom.fbx
+  orientation:
+  - 0.0
+  - 0.0
+  - 0.0
+  position:
+  - 20.0
+  - -1.5
+  - 20.0
+  scale:
+  - 0.01
+  - 0.01
+  - 0.01
+  script: basic_enemy.lua
+  texture: Mushroom_Texture.png
+#
