@@ -166,6 +166,7 @@ Player::Player(
     subscribe(MessageType::KEY_PRESS);
     subscribe(MessageType::ENEMY_ATTACK);
     subscribe(MessageType::KILLED_ENEMY);
+    subscribe(MessageType::QUEST_COMPLETE);
 }
 
 void Player::update(std::chrono::microseconds)
@@ -329,6 +330,20 @@ void Player::handle_message(MessageType message_type, const std::any &data)
             }
 
             publish(MessageType::LEVEL_PROGRESS, static_cast<float>(xp_) / static_cast<float>(next_level_));
+
+            break;
+        }
+        case MessageType::QUEST_COMPLETE:
+        {
+            xp_ += std::any_cast<std::uint32_t>(data);
+            if (xp_ >= next_level_)
+            {
+                xp_ %= next_level_;
+            }
+
+            publish(MessageType::LEVEL_PROGRESS, static_cast<float>(xp_) / static_cast<float>(next_level_));
+
+            break;
         }
         default: break;
     }

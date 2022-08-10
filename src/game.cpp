@@ -46,10 +46,12 @@
 #include "game_object.h"
 #include "hud.h"
 #include "input_handler.h"
+#include "kill_enemy_quest.h"
 #include "maths.h"
 #include "message_type.h"
 #include "player.h"
 #include "publisher.h"
+#include "quest_manager.h"
 #include "third_person_camera.h"
 #include "zone_loader.h"
 
@@ -122,6 +124,10 @@ void Game::run_zone()
 
     objects.emplace_back(std::make_unique<HUD>(100.0f, rt->width(), rt->height(), final_scene));
     auto *hud = static_cast<HUD *>(objects.back().get());
+
+    objects.emplace_back(std::make_unique<QuestManager>());
+    auto *qm = static_cast<QuestManager *>(objects.back().get());
+    qm->create<KillEnemyQuest>(2u);
 
     auto *rg = render_pipeline->create_render_graph();
     rg->render_node()->set_colour_input(rg->create<iris::TextureNode>(rt->colour_texture()));

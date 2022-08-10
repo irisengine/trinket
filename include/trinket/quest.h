@@ -11,20 +11,13 @@
 namespace trinket
 {
 
-enum class MessageType : std::uint16_t
+class Quest
 {
-    QUIT,
-    MOUSE_MOVE,
-    MOUSE_BUTTON_PRESS,
-    KEY_PRESS,
-    SCROLL_WHEEL,
-    WEAPON_COLLISION,
-    ENEMY_ATTACK,
-    PLAYER_HEALTH_CHANGE,
-    KILLED_ENEMY,
-    LEVEL_PROGRESS,
-    OBJECT_COLLISION,
-    QUEST_COMPLETE,
+  public:
+    virtual ~Quest() = default;
+
+    virtual bool is_complete() const = 0;
+    virtual std::uint32_t completion_xp() const = 0;
 };
 
 }

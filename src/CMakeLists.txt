@@ -9,10 +9,13 @@ add_executable(trinket
   ${INCLUDE_ROOT}/game_object.h
   ${INCLUDE_ROOT}/hud.h
   ${INCLUDE_ROOT}/input_handler.h
+  ${INCLUDE_ROOT}/kill_enemy_quest.h
   ${INCLUDE_ROOT}/maths.h
   ${INCLUDE_ROOT}/message_broker.h
   ${INCLUDE_ROOT}/player.h
   ${INCLUDE_ROOT}/publisher.h
+  ${INCLUDE_ROOT}/quest.h
+  ${INCLUDE_ROOT}/quest_manager.h
   ${INCLUDE_ROOT}/subscriber.h
   ${INCLUDE_ROOT}/third_person_camera.h
   ${INCLUDE_ROOT}/yaml_config.h
@@ -23,10 +26,12 @@ add_executable(trinket
   game.cpp
   hud.cpp
   input_handler.cpp
+  kill_enemy_quest.cpp
   main.cpp
   message_broker.cpp
   player.cpp
   publisher.cpp
+  quest_manager.cpp
   subscriber.cpp
   third_person_camera.cpp
   yaml_config.cpp
