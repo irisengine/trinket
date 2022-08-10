@@ -107,6 +107,7 @@ void Game::run_zone()
     auto render_pipeline = std::make_unique<iris::RenderPipeline>(window_->width(), window_->height());
 
     // basic scene setup
+    auto *final_scene = render_pipeline->create_scene();
     auto *game_scene = render_pipeline->create_scene();
     auto *rt = iris::Root::render_target_manager().create();
 
@@ -119,10 +120,9 @@ void Game::run_zone()
     objects.emplace_back(std::make_unique<ThirdPersonCamera>(player, window_->width(), window_->height(), ps));
     auto *camera = static_cast<ThirdPersonCamera *>(objects.back().get());
 
-    objects.emplace_back(std::make_unique<HUD>(100.0f, rt->width(), rt->height()));
+    objects.emplace_back(std::make_unique<HUD>(100.0f, rt->width(), rt->height(), final_scene));
     auto *hud = static_cast<HUD *>(objects.back().get());
 
-    auto *final_scene = render_pipeline->create_scene();
     auto *rg = render_pipeline->create_render_graph();
     rg->render_node()->set_colour_input(rg->create<iris::TextureNode>(rt->colour_texture()));
     final_scene->create_entity<iris::SingleEntity>(
