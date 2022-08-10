@@ -4,4 +4,4 @@ screen_height: 1080
 graphics_api: opengl
 physics_debug_draw: false
 zones: ["town3_zone.yml", "town2_zone.yml", "town_zone.yml", "dungeon_zone.yml"]
-starting_zone: "town3"
+starting_zone: "dungeon"

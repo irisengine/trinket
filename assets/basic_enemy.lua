@@ -116,7 +116,7 @@ function init(bounds_min, bounds_max)
     change_animation = false
     next_animation = ''
 
-    attack_distance = 2.0
+    attack_distance = 2.5
     has_attacked = false
 
     elapsed_us = 0

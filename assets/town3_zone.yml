@@ -5,7 +5,7 @@ player_start_position:
 - 4.336497688775575
 - 4.436654169714794
 portal:
-  destination: town
+  destination: dungeon
   position:
   - -23.0
   - 1.0
