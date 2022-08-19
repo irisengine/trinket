@@ -24,6 +24,7 @@ add_executable(trinket
   character_controller.cpp
   enemy.cpp
   game.cpp
+  npc.cpp
   hud.cpp
   input_handler.cpp
   kill_enemy_quest.cpp

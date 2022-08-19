@@ -16,6 +16,7 @@
 #include "iris/core/resource_loader.h"
 #include "iris/core/root.h"
 #include "iris/core/vector3.h"
+#include "iris/graphics/animation/animation_layer.h"
 #include "iris/graphics/mesh_manager.h"
 #include "iris/graphics/render_graph/arithmetic_node.h"
 #include "iris/graphics/render_graph/render_graph.h"
@@ -36,6 +37,7 @@
 
 #include "enemy.h"
 #include "game_object.h"
+#include "npc.h"
 #include "player.h"
 #include "third_person_camera.h"
 
@@ -78,6 +80,8 @@ iris::Vector3 bounding_box(const iris::Mesh *mesh, const iris::Vector3 &scale)
 }
 
 }
+
+using namespace std::literals::chrono_literals;
 
 namespace trinket
 {
@@ -214,6 +218,16 @@ void YamlZoneLoader::load_enemies(
     Player *player,
     ThirdPersonCamera *camera)
 {
+    // game_objects.push_back(std::make_unique<NPC>(
+    //    scene,
+    //    iris::Vector3{30.0f, 0.0f, -10.0f},
+    //    render_pipeline,
+    //    "Knight_Golden_Female.fbx",
+    //    "CharacterArmature|Victory"));
+
+    // game_objects.push_back(std::make_unique<NPC>(
+    //    scene, iris::Vector3{20.0f, 0.0f, 30.0f}, render_pipeline, "Wolf.fbx", "AnimalArmature|Idle_2"));
+
     for (const auto &enemy : yaml_file_["enemies"])
     {
         const auto position = get_vector3(enemy["position"]);

@@ -107,7 +107,7 @@ void Enemy::update(std::chrono::microseconds elapsed)
 
         if (const auto attack = script_.execute<bool>("attack_player"); attack)
         {
-            publish(MessageType::ENEMY_ATTACK, {1.0f});
+            publish(MessageType::ENEMY_ATTACK, {1000.0f});
         }
 
         if (health_ <= 0.0f)

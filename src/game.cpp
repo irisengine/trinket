@@ -33,6 +33,7 @@
 #include "iris/graphics/render_target_manager.h"
 #include "iris/graphics/scene.h"
 #include "iris/graphics/single_entity.h"
+#include "iris/graphics/text_factory.h"
 #include "iris/graphics/texture_manager.h"
 #include "iris/graphics/window.h"
 #include "iris/graphics/window_manager.h"
@@ -69,7 +70,7 @@ Game::Game(std::unique_ptr<Config> config, std::vector<std::unique_ptr<ZoneLoade
     , window_(nullptr)
     , portal_(nullptr)
     , portal_destination_()
-
+    , state_(GameState::PLAYING)
 {
     const auto starting_zone_name = config_->string_option(ConfigOption::STARTING_ZONE);
 
@@ -84,6 +85,7 @@ Game::Game(std::unique_ptr<Config> config, std::vector<std::unique_ptr<ZoneLoade
 
     subscribe(MessageType::QUIT);
     subscribe(MessageType::KEY_PRESS);
+    subscribe(MessageType::PLAYER_DIED);
 }
 
 void Game::run()
@@ -180,20 +182,23 @@ void Game::run_zone()
         0ms,
         16ms,
         [ps, player, this](auto, std::chrono::microseconds delta) {
-            ps->step(std::chrono::duration_cast<std::chrono::milliseconds>(delta));
-
-            for (const auto &contact : ps->contacts(portal_))
+            if (state_ == GameState::PLAYING)
             {
-                if (contact.contact == player->rigid_body())
+                ps->step(std::chrono::duration_cast<std::chrono::milliseconds>(delta));
+
+                for (const auto &contact : ps->contacts(portal_))
                 {
-                    auto destination =
-                        std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [this](auto &element) {
-                            return element->name() == portal_destination_;
-                        });
+                    if (contact.contact == player->rigid_body())
+                    {
+                        auto destination =
+                            std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [this](auto &element) {
+                                return element->name() == portal_destination_;
+                            });
 
-                    iris::ensure(destination != std::cend(zone_loaders_), "missing zone");
+                        iris::ensure(destination != std::cend(zone_loaders_), "missing zone");
 
-                    next_zone_ = destination->get();
+                        next_zone_ = destination->get();
+                    }
                 }
             }
 
@@ -212,6 +217,7 @@ void Game::run_zone()
             return running_ && (next_zone_ == nullptr);
         }};
 
+    state_ = GameState::PLAYING;
     looper.run();
 }
 
@@ -225,12 +231,58 @@ void Game::handle_message(MessageType message_type, const std::any &data)
             const auto key = std::any_cast<iris::KeyboardEvent>(data);
             if ((key.key == iris::Key::R) && (key.state == iris::KeyState::DOWN))
             {
-                next_zone_ = current_zone_;
+                if (state_ == GameState::PLAYING)
+                {
+                    next_zone_ = current_zone_;
+                }
+                else
+                {
+                    const auto starting_zone_name = config_->string_option(ConfigOption::STARTING_ZONE);
+
+                    auto starting_zone = std::find_if(
+                        std::begin(zone_loaders_), std::end(zone_loaders_), [&starting_zone_name](auto &element) {
+                            return element->name() == starting_zone_name;
+                        });
+
+                    next_zone_ = starting_zone->get();
+                }
             }
+            break;
+        }
+        case MessageType::PLAYER_DIED:
+        {
+            state_ = GameState::DEAD;
+
+            auto pipeline = std::make_unique<iris::RenderPipeline>(window_->width(), window_->height());
+            auto *scene = pipeline->create_scene();
+
+            scene->create_entity<iris::SingleEntity>(
+                nullptr,
+                iris::Root::mesh_manager().sprite({}),
+                iris::Transform{
+                    {}, {}, {static_cast<float>(window_->width()), static_cast<float>(window_->height()), 1.0f}});
+
+            auto *text = iris::text_factory::create("Arial", 72, "you died 😢", {1.0f, 1.0f, 1.0f, 1.0f});
+            auto *rg = pipeline->create_render_graph();
+            rg->render_node()->set_colour_input(rg->create<iris::TextureNode>(text));
+            scene->create_entity<iris::SingleEntity>(
+                rg,
+                iris::Root::mesh_manager().sprite({1.0f, 1.0f, 1.0f}),
+                iris::Transform{
+                    {0.0f, 0.0f, 1.0f},
+                    {},
+                    {static_cast<float>(text->width()), static_cast<float>(text->height()), 1.0f}},
+                true);
+
+            static const iris::Camera camera{iris::CameraType::ORTHOGRAPHIC, window_->width(), window_->height()};
+
+            auto *pass = pipeline->create_render_pass(scene);
+            pass->camera = &camera;
+
+            window_->set_render_pipeline(std::move(pipeline));
             break;
         }
         default: break;
     }
 }
-
 }

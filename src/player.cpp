@@ -236,6 +236,12 @@ void Player::update(std::chrono::microseconds)
             publish(MessageType::OBJECT_COLLISION, std::make_tuple(contact.contact, contact.position));
         }
     }
+
+    if (health_ <= 0.0f)
+    {
+        publish(MessageType::PLAYER_DIED, {});
+        health_ = 1.0f;
+    }
 }
 
 void Player::set_orientation(const iris::Quaternion &orientation)
