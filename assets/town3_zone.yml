@@ -1,13 +1,13 @@
 enemies: []
 name: town3
 player_start_position:
-- 20.317285910208664
+- 19.095602456776128
 - 4.336497688775575
-- 4.436654169714794
+- 10.626517000439614
 portal:
-  destination: dungeon
+  destination: town
   position:
-  - -23.0
+  - -2300.0
   - 1.0
   - 0.0
   scale:
@@ -32,7 +32,7 @@ static_geometry:
   - 1000.0
   texture:
   - grass.jpg
-  texture_scale: 128.0
+  texture_scale: 100.0
 - mesh_type: Bell_Tower.fbx
   orientation:
   - 0
@@ -57,6 +57,66 @@ static_geometry:
   - 48.271879756683816
   - 0.0
   - 2.03370375162926
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: Cauldron.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -17.46315325381962
+  - 0.0
+  - -13.526471668211009
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: Dog.fbx
+  orientation:
+  - 0
+  - 1.5707963148700173
+  - -1.5707963267948966
+  position:
+  - -0.45308799586142
+  - 2.1788639172554456
+  - 32.47596202820674
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 1.0
+  - 1.0
+  - 1.0
+- mesh_type: Dog.fbx
+  orientation:
+  - 0
+  - 1.5707963148700173
+  - -1.5707963267948966
+  position:
+  - -0.45308799586142
+  - 2.1788639172554456
+  - 32.47596202820674
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 1.0
+  - 1.0
+  - 1.0
+- mesh_type: Hay.fbx
+  orientation:
+  - 0
+  - 0.0
+  - -1.5707963267948966
+  position:
+  - -20.197126640404463
+  - 1.8825968526676782
+  - -12.137254658135179
   rigid_body: true
   rigid_body_type: mesh
   scale:
@@ -102,6 +162,21 @@ static_geometry:
   - 32.31066371817992
   - 0.0
   - -28.25973100173746
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
+  - 7.0
+- mesh_type: MarketStand_1.fbx
+  orientation:
+  - 0
+  - 0.8113412868646387
+  - -1.5707963267948966
+  position:
+  - -19.75636408899709
+  - 0.0
+  - -10.442667099607025
   rigid_body: true
   rigid_body_type: mesh
   scale:
@@ -933,6 +1008,21 @@ static_geometry:
   scale:
   - 7.855555615894464
   - -11.571
+  - 7.0
+- mesh_type: Well.fbx
+  orientation:
+  - 0
+  - 1.3324769097197469
+  - -1.5707963267948966
+  position:
+  - -23.082457519489214
+  - 1.637040741450157
+  - 2.3841035935622656
+  rigid_body: true
+  rigid_body_type: mesh
+  scale:
+  - 7.0
+  - 7.0
   - 7.0
 - mesh_type: PineTree_1.fbx
   normal: PineTree_Bark_Normal.png
