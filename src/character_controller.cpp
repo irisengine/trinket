@@ -22,7 +22,6 @@ CharacterController::CharacterController(
     : iris::BasicCharacterController(ps, speed, width, height, float_height)
     , is_being_shunted_(false)
     , shunt_end_(std::chrono::system_clock::now())
-    , shunt_distance_(0.0f)
     , saved_movement_direction_()
     , saved_speed_(0.0)
 {
@@ -30,6 +29,7 @@ CharacterController::CharacterController(
 
 void CharacterController::set_movement_direction(const iris::Vector3 &direction)
 {
+    // update if not being shunted
     if (!is_being_shunted_)
     {
         iris::BasicCharacterController::set_movement_direction(direction);
@@ -63,7 +63,6 @@ void CharacterController::shunt(const iris::Vector3 direction, float distance, s
         speed_ = distance / (static_cast<float>(time.count()) / 1000.0f);
 
         shunt_end_ = std::chrono::system_clock::now() + time;
-        shunt_distance_ = distance;
         is_being_shunted_ = true;
     }
 }

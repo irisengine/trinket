@@ -25,15 +25,72 @@
 namespace trinket
 {
 
+/**
+ * Implementation of ZoneLoader for YAM<L files.
+ */
 class YamlZoneLoader : public ZoneLoader
 {
   public:
+    /**
+     * Create a new YamlZoneLoader.
+     *
+     * @param zone_file
+     *   YAML file to parse.
+     */
     YamlZoneLoader(const std::string &zone_file);
-    ~YamlZoneLoader() override = default;
+
+    /**
+     * Get the name of the zone.
+     *
+     * @returns
+     *   Zone name.
+     */
     std::string name() override;
+
+    /**
+     * Get player start position.
+     *
+     * @returns
+     *   Player start position.
+     */
     iris::Vector3 player_start_position() override;
+
+    /**
+     * Load static geometry.
+     *
+     * @param ps
+     *   Physics system.
+     *
+     * @param scene
+     *   Scene to load into.
+     *
+     * @param render_pipeline
+     *   Render pipeline to use.
+     */
     void load_static_geometry(iris::PhysicsSystem *ps, iris::Scene *scene, iris::RenderPipeline &render_pipeline)
         override;
+
+    /**
+     * Load enemies.
+     *
+     * @param ps
+     *   Physics system.
+     *
+     * @param scene
+     *   Scene to load into.
+     *
+     * @param render_pipeline
+     *   Render pipeline to use.
+     *
+     * @param game_objects
+     *   Collection of game objects to add enemies to.
+     *
+     * @param player
+     *   Pointer to player object.
+     *
+     * @param camera
+     *   Pointer to camera object,
+     */
     void load_enemies(
         iris::PhysicsSystem *ps,
         iris::Scene *scene,
@@ -41,9 +98,17 @@ class YamlZoneLoader : public ZoneLoader
         std::vector<std::unique_ptr<GameObject>> &game_objects,
         Player *player,
         ThirdPersonCamera *camera) override;
+
+    /**
+     * Get portal data.
+     *
+     * @returns
+     *   Tuple of portal transform and name of next zone.
+     */
     std::tuple<iris::Transform, std::string> portal() override;
 
   private:
+    /** YAML node. */
     YAML::Node yaml_file_;
 };
 

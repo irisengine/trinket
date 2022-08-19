@@ -78,7 +78,6 @@ Game::Game(std::unique_ptr<Config> config, std::vector<std::unique_ptr<ZoneLoade
         std::find_if(std::begin(zone_loaders_), std::end(zone_loaders_), [&starting_zone_name](auto &element) {
             return element->name() == starting_zone_name;
         });
-
     iris::ensure(starting_zone != std::end(zone_loaders_), "missing starting zone");
 
     next_zone_ = starting_zone->get();
@@ -93,17 +92,23 @@ void Game::run()
     window_ = iris::Root::window_manager().create_window(
         config_->uint32_option(ConfigOption::SCREEN_WIDTH), config_->uint32_option(ConfigOption::SCREEN_HEIGHT));
 
+    // the main game loops keeps going until signalled to stop
     do
     {
+        // update current zone and reset next zone
         current_zone_ = next_zone_;
         next_zone_ = nullptr;
 
+        // actually run the game
         run_zone();
     } while (running_);
 }
 
 void Game::run_zone()
 {
+    // we run the game in this function, that way we can keep all variables local and can load a new zone by simply
+    // setting next_zone_ and returning (run() will call us again with the next zone)
+
     auto *ps = iris::Root::physics_manager().create_physics_system();
     auto &mesh_manager = iris::Root::mesh_manager();
     auto &rtm = iris::Root::texture_manager();
@@ -115,6 +120,7 @@ void Game::run_zone()
     auto *game_scene = render_pipeline->create_scene();
     auto *rt = iris::Root::render_target_manager().create();
 
+    // setup game objects
     std::vector<std::unique_ptr<GameObject>> objects{};
     objects.emplace_back(std::make_unique<InputHandler>(window_));
     objects.emplace_back(
@@ -139,13 +145,16 @@ void Game::run_zone()
         iris::Transform{{}, {}, {static_cast<float>(window_->width()), static_cast<float>(window_->height()), 0.0f}});
     iris::Camera final_camera{iris::CameraType::ORTHOGRAPHIC, window_->width(), window_->height()};
 
+    // load data from zone
     current_zone_->load_static_geometry(ps, game_scene, *render_pipeline);
     current_zone_->load_enemies(ps, game_scene, *render_pipeline, objects, player, camera);
 
+    // lighting setup
     game_scene->set_ambient_light({0.5f, 0.5f, 0.5f, 1.0f});
     auto *light = game_scene->create_light<iris::PointLight>(iris::Vector3{10.0f}, iris::Colour{10.0f, 10.0f, 10.0f});
     game_scene->create_light<iris::DirectionalLight>(iris::Vector3{0.0, -1.0f, 0.0f}, true);
 
+    // setup portal
     const auto [portal_transform, destination] = current_zone_->portal();
     game_scene->create_entity<iris::SingleEntity>(nullptr, mesh_manager.cube({}), portal_transform);
     portal_ = ps->create_rigid_body(
@@ -154,6 +163,7 @@ void Game::run_zone()
         iris::RigidBodyType::GHOST);
     portal_destination_ = destination;
 
+    // optional debug draw
     if (config_->bool_option(ConfigOption::PHYSICS_DEBUG_DRAW))
     {
         ps->enable_debug_draw(game_scene);
@@ -162,6 +172,7 @@ void Game::run_zone()
     const auto *game_sky_box = iris::Root::texture_manager().create(
         iris::Colour{0.275f, 0.51f, 0.796f}, iris::Colour{0.5f, 0.5f, 0.5f}, 2048u, 2048u);
 
+    // setup the game pass
     auto *game_pass = render_pipeline->create_render_pass(game_scene);
     game_pass->camera = camera->camera();
     game_pass->colour_target = rt;
@@ -170,22 +181,25 @@ void Game::run_zone()
         .ambient_occlusion = iris::AmbientOcclusionDescription{},
     };
 
+    // setup the final pass (so we can apply anti aliasing)
     auto *final_pass = render_pipeline->create_render_pass(final_scene);
     final_pass->camera = &final_camera;
-    final_pass->post_processing_description = {//.bloom = iris::BloomDescription{.threshold = 4.0f},
-                                               .colour_adjust = iris::ColourAdjustDescription{},
-                                               .anti_aliasing = iris::AntiAliasingDescription{}};
+    final_pass->post_processing_description = {
+        .colour_adjust = iris::ColourAdjustDescription{}, .anti_aliasing = iris::AntiAliasingDescription{}};
 
     window_->set_render_pipeline(std::move(render_pipeline));
 
+    // setup game loop
     iris::Looper looper{
         0ms,
         16ms,
         [ps, player, this](auto, std::chrono::microseconds delta) {
             if (state_ == GameState::PLAYING)
             {
+                // update physics
                 ps->step(std::chrono::duration_cast<std::chrono::milliseconds>(delta));
 
+                // check if we are intersecting portal
                 for (const auto &contact : ps->contacts(portal_))
                 {
                     if (contact.contact == player->rigid_body())
@@ -197,6 +211,7 @@ void Game::run_zone()
 
                         iris::ensure(destination != std::cend(zone_loaders_), "missing zone");
 
+                        // set next zone which will get loaded when we return
                         next_zone_ = destination->get();
                     }
                 }
@@ -205,8 +220,10 @@ void Game::run_zone()
             return true;
         },
         [&](std::chrono::microseconds elapsed, auto) {
+            // move light with player
             light->set_position(player->position() + iris::Vector3{0.0f, 10.0f, 0.0f});
 
+            // update game objects
             for (auto &object : objects)
             {
                 object->update(elapsed);
@@ -229,6 +246,10 @@ void Game::handle_message(MessageType message_type, const std::any &data)
         case MessageType::KEY_PRESS:
         {
             const auto key = std::any_cast<iris::KeyboardEvent>(data);
+
+            // pressing R has two outcomes
+            //   player alive - reload current scene (useful for testing)
+            //   player dead  - reload starting scene
             if ((key.key == iris::Key::R) && (key.state == iris::KeyState::DOWN))
             {
                 if (state_ == GameState::PLAYING)
@@ -252,6 +273,8 @@ void Game::handle_message(MessageType message_type, const std::any &data)
         case MessageType::PLAYER_DIED:
         {
             state_ = GameState::DEAD;
+
+            // create death screen
 
             auto pipeline = std::make_unique<iris::RenderPipeline>(window_->width(), window_->height());
             auto *scene = pipeline->create_scene();

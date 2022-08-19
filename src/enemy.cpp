@@ -51,13 +51,16 @@ Enemy::Enemy(
     , health_(100.0f)
     , is_dead_(false)
 {
+    // call init of script
     script_.execute("init", bounds_min, bounds_max);
 
+    // set death animation to not loop
     auto find = std::find_if(std::begin(animations), std::end(animations), [](const iris::Animation &animation) {
         return animation.name() == "Death_Back";
     });
     find->set_playback_type(iris::PlaybackType::SINGLE);
 
+    // create animation controller with required transitions
     animation_controller_ = std::make_unique<iris::AnimationController>(
         animations,
         std::vector<iris::AnimationLayer>{
@@ -79,8 +82,10 @@ Enemy::Enemy(
 
 void Enemy::update(std::chrono::microseconds elapsed)
 {
+    // if we are not dead then update
     if (!is_dead_)
     {
+        // call script update
         script_.execute(
             "update",
             render_entity_->position(),
@@ -90,26 +95,31 @@ void Enemy::update(std::chrono::microseconds elapsed)
 
         static const iris::Vector3 offset{0.0f, -2.0f, 0.0f};
 
+        // update entity
         character_controller_->set_movement_direction(script_.execute<iris::Vector3>("get_walk_direction"));
         render_entity_->set_orientation(script_.execute<iris::Quaternion>("get_orientation"));
         render_entity_->set_position(character_controller_->position() + offset);
 
+        // update billboard health bar
         iris::Transform billboard_transform{iris::Matrix4::invert(camera_->camera()->view())};
         billboard_transform.set_translation(render_entity_->position() + iris::Vector3{0.0f, 3.0f, 0.0f});
         billboard_transform.set_scale(health_bar_scale_);
         health_bar_->set_transform(billboard_transform.matrix());
 
+        // check if script wants us to update animation
         if (const auto [change, animation] = script_.execute<bool, std::string>("get_animation_change"); change)
         {
             LOG_DEBUG("enemy", "new animation: {}", animation);
             animation_controller_->play(0u, animation);
         }
 
+        // if script attacks then send message
         if (const auto attack = script_.execute<bool>("attack_player"); attack)
         {
             publish(MessageType::ENEMY_ATTACK, {1.0f});
         }
 
+        // if we die then send message and update state
         if (health_ <= 0.0f)
         {
             character_controller_->reposition(render_entity_->position(), {});
@@ -128,12 +138,12 @@ void Enemy::handle_message(MessageType message_type, const std::any &data)
     {
         case MessageType::WEAPON_COLLISION:
         {
+            // if we are hit by player (and not in a hit cooldown) then shunt us and decrement health
             const auto &[body, pos] = std::any_cast<std::tuple<iris::RigidBody *, iris::Vector3>>(data);
             if (body == character_controller_->rigid_body())
             {
                 if (std::chrono::system_clock::now() > hit_cooldown_)
                 {
-                    LOG_DEBUG("enemy", "hit!");
                     hit_cooldown_ = std::chrono::system_clock::now() + 500ms;
                     const auto shunt_dir =
                         iris::Vector3::normalise(character_controller_->position() - player_->position());

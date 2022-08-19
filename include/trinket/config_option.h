@@ -9,6 +9,9 @@
 namespace trinket
 {
 
+/**
+ * Enumeration of possible config options.
+ */
 enum class ConfigOption
 {
     SCREEN_WIDTH,

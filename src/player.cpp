@@ -76,6 +76,8 @@ Player::Player(
     render_entities_.emplace_back(scene->create_entity<iris::SingleEntity>(
         render_graph, meshes.mesh_data.front().mesh, iris::Transform{start_position, {}, {0.01f}}, skeleton_));
 
+    // load submeshes based on known offsets into mesh data
+
     auto *hair = render_entities_.emplace_back(scene->create_entity<iris::SingleEntity>(
         render_graph, meshes.mesh_data[4].mesh, iris::Transform{{}, {}, {1.01f}}, skeleton_));
 
@@ -103,12 +105,14 @@ Player::Player(
                      iris::Matrix4::make_translate({0.0f, 0.0f, 0.1f}),
         .offset = {0.0f, 0.0f, 0.0f}};
 
+    // set sword attack animation to not loop
     auto sword_attack_animation =
         std::find_if(std::begin(animations), std::end(animations), [](const iris::Animation &animation) {
             return animation.name() == "CharacterArmature|Sword_AttackFast";
         });
     sword_attack_animation->set_playback_type(iris::PlaybackType::SINGLE);
 
+    // create animation controller with required transitions
     animation_controller_ = std::make_unique<iris::AnimationController>(
         animations,
         std::vector<iris::AnimationLayer>{
@@ -139,6 +143,8 @@ Player::Player(
 
     const auto sword_meshes = mesh_manager.load_mesh("Sword.fbx");
     iris::expect(sword_meshes.mesh_data.size() == 1u, "expecting only one mesh");
+
+    // load sword and attach to hand
 
     auto *render_graph2 = render_pipeline.create_render_graph();
     render_graph2->render_node()->set_colour_input(render_graph2->create<iris::ArithmeticNode>(
@@ -198,11 +204,6 @@ void Player::update(std::chrono::microseconds)
     static constexpr iris::Vector3 player_world_offset{0.0f, -2.0f, 0.0f};
     static constexpr auto player_world_offset_transform = iris::Matrix4::make_translate(player_world_offset);
 
-    if (!lock_)
-    {
-        render_entities_.front()->set_position(character_controller_->position() + player_world_offset);
-    }
-
     for (auto &[entity, sub_mesh] : sub_meshes_)
     {
         // bone to attach sword to
@@ -256,7 +257,7 @@ void Player::set_walk_direction(const iris::Vector3 &direction)
 
 iris::Vector3 Player::position() const
 {
-    return lock_ ? p : character_controller_->position();
+    return character_controller_->position();
 }
 
 const iris::RigidBody *Player::rigid_body() const
@@ -290,6 +291,7 @@ void Player::handle_message(MessageType message_type, const std::any &data)
         {
             const auto key = std::any_cast<iris::KeyboardEvent>(data);
 
+            // update player animation to running
             if ((key.key == iris::Key::W) || (key.key == iris::Key::A) || (key.key == iris::Key::S) ||
                 (key.key == iris::Key::D))
             {
@@ -311,11 +313,6 @@ void Player::handle_message(MessageType message_type, const std::any &data)
                         }
                     }
                 }
-            }
-            else if (key.key == iris::Key::L && key.state == iris::KeyState::DOWN)
-            {
-                p = position();
-                lock_ = !lock_;
             }
 
             break;

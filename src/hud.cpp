@@ -34,7 +34,6 @@ namespace trinket
 HUD::HUD(float starting_health, std::uint32_t width, std::uint32_t height, iris::Scene *scene)
     : health_bar_(nullptr)
     , level_progress_bar_(nullptr)
-    , scene_(scene)
     , camera_(iris::CameraType::ORTHOGRAPHIC, width, height)
     , width_(width)
     , height_(height)
@@ -42,12 +41,12 @@ HUD::HUD(float starting_health, std::uint32_t width, std::uint32_t height, iris:
 {
     const auto offset = 20.0f;
 
-    health_bar_ = scene_->create_entity<iris::SingleEntity>(
+    health_bar_ = scene->create_entity<iris::SingleEntity>(
         nullptr,
         iris::Root::mesh_manager().sprite({1.0f, 0.0f, 0.0f}),
         iris::Transform({0.0f, height - offset, 1.0f}, {}, {width - 40.0f, 10.0f, 0.0f}));
 
-    level_progress_bar_ = scene_->create_entity<iris::SingleEntity>(
+    level_progress_bar_ = scene->create_entity<iris::SingleEntity>(
         nullptr,
         iris::Root::mesh_manager().sprite({1.0f, 1.0f, 0.0f}),
         iris::Transform({0.0f, offset - height, 1.0f}, {}, {0.0f, 10.0f, 0.0f}));

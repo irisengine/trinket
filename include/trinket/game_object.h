@@ -11,10 +11,20 @@
 namespace trinket
 {
 
+/**
+ * Generic object for the game than can be updated each tick.
+ */
 class GameObject
 {
   public:
     virtual ~GameObject() = default;
+
+    /**
+     * Update object.
+     *
+     * @param elapsed
+     *   Time since last update.
+     */
     virtual void update(std::chrono::microseconds elapsed) = 0;
 };
 

@@ -13,6 +13,9 @@
 namespace trinket
 {
 
+/**
+ * Abstract class for sending messages.
+ */
 class Publisher
 {
 
@@ -20,6 +23,15 @@ class Publisher
     virtual ~Publisher() = default;
 
   protected:
+    /*
+     * Publish a message to all subscribers.
+     *
+     * @param message_type
+     *   Type of message being sent (will be sent to subscribers of this type).
+     *
+     * @param data
+     *   Any data for the message.
+     */
     void publish(MessageType message_type, const std::any &data);
 };
 

@@ -30,18 +30,21 @@ void go(int, char **)
     iris::ResourceLoader::instance().set_root_directory("assets");
     auto config = std::make_unique<trinket::YamlConfig>("config.yml");
 
+    // set graphics api if one was set
     if (const auto &graphics_api = config->string_option(trinket::ConfigOption::GRAPHICS_API);
         graphics_api != "default")
     {
         iris::Root::set_graphics_api(graphics_api);
     }
 
+    // create a loader for all zones in config
     std::vector<std::unique_ptr<trinket::ZoneLoader>> zone_loaders{};
     for (const auto &zone_file : config->string_array_option(trinket::ConfigOption::ZONE_LOADERS))
     {
         zone_loaders.emplace_back(std::make_unique<trinket::YamlZoneLoader>(zone_file));
     }
 
+    // kick off game
     trinket::Game game{std::move(config), std::move(zone_loaders)};
     game.run();
 }

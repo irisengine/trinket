@@ -11,6 +11,9 @@
 namespace trinket
 {
 
+/**
+ * Enumeration of possible messages.
+ */
 enum class MessageType : std::uint16_t
 {
     QUIT,

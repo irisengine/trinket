@@ -16,13 +16,24 @@
 namespace trinket
 {
 
+/**
+ * Implementation of GameObject for handling user input.
+ */
 class InputHandler : public GameObject, Publisher
 {
   public:
     InputHandler(iris::Window *window);
+
+    /**
+     * Update object.
+     *
+     * @param elapsed
+     *   Time since last update.
+     */
     void update(std::chrono::microseconds) override;
 
   private:
+    /** Window for game. */
     iris::Window *window_;
 };
 

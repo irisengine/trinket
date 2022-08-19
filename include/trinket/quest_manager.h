@@ -21,21 +21,34 @@ namespace trinket
 template <class T>
 concept IsQuest = std::is_base_of_v<Quest, T>;
 
+/**
+ * GameObject to manage all plater quests.
+ */
 class QuestManager : public GameObject, Publisher
 {
   public:
-    QuestManager() = default;
-    ~QuestManager() override = default;
-
+    /**
+     * Create a new quest.
+     *
+     * @param args
+     *   Args for quest object (perfectly forwarded).
+     */
     template <IsQuest T, class... Args>
     void create(Args &&...args)
     {
         quests_.push_back(std::make_unique<T>(std::forward<Args>(args)...));
     }
 
+    /**
+     * Update object.
+     *
+     * @param elapsed
+     *   Time since last update.
+     */
     void update(std::chrono::microseconds elapsed) override;
 
   private:
+    /** Collection of created quests. */
     std::vector<std::unique_ptr<Quest>> quests_;
 };
 
