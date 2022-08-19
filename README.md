@@ -1,3 +1,3 @@
 # Trinket
-A game build with [iris](https://github.com/irisengine/iris)
+A game built with [iris](https://github.com/irisengine/iris)
 
