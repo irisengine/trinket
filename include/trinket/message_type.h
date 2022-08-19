@@ -24,6 +24,8 @@ enum class MessageType : std::uint16_t
     KILLED_ENEMY,
     LEVEL_PROGRESS,
     OBJECT_COLLISION,
+    QUEST_COMPLETE,
+    PLAYER_DIED,
 };
 
 }

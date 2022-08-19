@@ -22,6 +22,12 @@
 namespace trinket
 {
 
+enum class GameState
+{
+    PLAYING,
+    DEAD
+};
+
 class Game : public Subscriber
 {
   public:
@@ -42,6 +48,7 @@ class Game : public Subscriber
     iris::Window *window_;
     iris::RigidBody *portal_;
     std::string portal_destination_;
+    GameState state_;
 };
 
 }
