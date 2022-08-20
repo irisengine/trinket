@@ -204,6 +204,8 @@ void Player::update(std::chrono::microseconds)
     static constexpr iris::Vector3 player_world_offset{0.0f, -2.0f, 0.0f};
     static constexpr auto player_world_offset_transform = iris::Matrix4::make_translate(player_world_offset);
 
+    render_entities_.front()->set_position(character_controller_->position() + player_world_offset);
+
     for (auto &[entity, sub_mesh] : sub_meshes_)
     {
         // bone to attach sword to
@@ -215,7 +217,6 @@ void Player::update(std::chrono::microseconds)
         const auto bone_to_world_space = render_entities_.front()->transform() * bone_transform *
                                          iris::Matrix4::invert(bone.offset()) * sub_mesh.transform;
 
-        // compound transform for sword::
         entity->set_transform(bone_to_world_space);
 
         if (entity == sword_entity_)

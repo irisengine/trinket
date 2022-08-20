@@ -31,6 +31,7 @@ add_executable(trinket
   message_broker.cpp
   player.cpp
   publisher.cpp
+  quest_manager.cpp
   subscriber.cpp
   third_person_camera.cpp
   yaml_config.cpp
